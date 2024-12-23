@@ -1,155 +1,126 @@
 <?php
 
-/**
- * -------------------------------------------------------------------------
- * RoundRobin plugin for GLPI
- * -------------------------------------------------------------------------
- *
- * LICENSE
- *
- * This file is part of RoundRobin GLPI Plugin.
- *
- * RoundRobin is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
- *
- * RoundRobin is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with RoundRobin. If not, see <http://www.gnu.org/licenses/>.
- * -------------------------------------------------------------------------
- * @copyright Copyright (C) 2022 by initiativa s.r.l. - http://www.initiativa.it
- * @license   GPLv3 https://www.gnu.org/licenses/gpl-3.0.html
- * @link      https://github.com/initiativa/roundrobin
- * -------------------------------------------------------------------------
- */
 include ('../../../inc/includes.php');
 require_once 'config.class.php';
 require_once 'RRAssignmentsEntity.class.php';
 
-class PluginRoundRobinSettings extends CommonDBTM {
+class TicketBalanceConfigFormClass extends CommonDBTM {
+
+    // Propriedade para armazenar a dependência
+    private $rrAssignmentsEntity;
 
     public function __construct() {
-        PluginRoundRobinLogger::addWarning(__METHOD__ . ' - constructor called');
+        PluginTicketBalanceLogger::addWarning(__METHOD__ . ' - construtor chamado');
+        
+        // Inicializar a dependência no construtor
+        $this->rrAssignmentsEntity = new PluginTicketBalanceRRAssignmentsEntity();
     }
 
     public function renderTitle() {
         $injectHTML = <<< EOT
                 <p>
                     <div align='center'>
-                        <h1>RoundRobin Settings</h1>
+                        <h1>Configurações do TicketBalance</h1>
                     </div>
                 </p>
 EOT;
         echo $injectHTML;
     }
 
-    public function showFormRoundRobin() {
+    public function showFormTicketBalance() {
         global $CFG_GLPI, $DB;
 
         if (self::checkCentralInterface()) {
-            PluginRoundRobinLogger::addWarning(__METHOD__ . ' - display contents');
+            PluginTicketBalanceLogger::addWarning(__METHOD__ . ' - exibir conteúdo');
             self::displayContent();
         } else {
-            echo "<div align='center'><br><img src='" . $CFG_GLPI['root_doc'] . "/pics/warning.png'><br>" . __("Access denied") . "</div>";
+            echo "<div align='center'><br><img src='" . $CFG_GLPI['root_doc'] . "/pics/warning.png'><br>" . __("Acesso negado") . "</div>";
         }
     }
 
     public static function checkCentralInterface() {
         $currentInterface = Session::getCurrentInterface();
-        PluginRoundRobinLogger::addWarning(__METHOD__ . ' - current interface: ' . $currentInterface);
+        PluginTicketBalanceLogger::addWarning(__METHOD__ . ' - interface atual: ' . $currentInterface);
         return $currentInterface === 'central';
     }
 
-    public static function displayContent() {
+    public function displayContent() {
+        $auto_assign_group = Html::cleanInputText(self::getAutoAssignGroup());
+        $settings = self::getSettings();
+
+        // Gerar o token CSRF e armazená-lo na sessão
+        $csrfToken = Session::getNewCSRFToken();
+        $_SESSION['_glpi_csrf_token'] = $csrfToken;
+
         echo "<div class='center'>";
         echo "<form name='settingsForm' action='config.form.php' method='post' enctype='multipart/form-data'>";
-        echo Html::hidden('_glpi_csrf_token', ['value' => Session::getNewCSRFToken()]);
+        echo Html::hidden('_glpi_csrf_token', ['value' => $csrfToken]); // Utiliza o token armazenado na sessão
         echo "<table class='tab_cadre_fixe'>";
-        echo "<tr><th colspan='4'>" . "Enable Group Round Robin Ticket Assignment for each ITILCategory" . "</th></tr>";
-        echo "<tr><th colspan='4'>" . "<hr />" . "</th></tr>";
+        
+        // Título do Formulário
+        echo "<tr><th colspan='4'>Distribuição rotativa de técnicos em chamados, considerando o grupo encarregado da Categoria ITIL</th></tr>";
+        echo "<tr><th colspan='4'><hr /></th></tr>";
 
-        /**
-         * option row
-         */
         echo "<tr><th colspan='4'>";
-        echo "Assign also to the original Group: &nbsp;&nbsp; <input type='radio' name='auto_assign_group' value='1'";
-        $auto_assign_group = self::getAutoAssignGoup();
-        if ($auto_assign_group) {
-            echo "checked='checked'";
-        }
-        echo "> Yes&nbsp;&nbsp;";
-        echo "<input type='radio' name='auto_assign_group' value='0'";
-        if (!$auto_assign_group) {
-            echo "checked='checked'";
-        }
-        echo "> No";
+        echo "Atribuir também o grupo encarregado da Categoria ITIL? &nbsp;&nbsp;";
+        echo "<input type='radio' name='auto_assign_group' value='1'" . ($auto_assign_group ? " checked='checked'" : "") . "> Sim&nbsp;&nbsp;";
+        echo "<input type='radio' name='auto_assign_group' value='0'" . (!$auto_assign_group ? " checked='checked'" : "") . "> Não";
         echo "</th></tr>";
 
-        /**
-         * assignments rows
-         */
-        echo "<tr><th colspan='4'>" . "<hr />" . "</th></tr>";
-        echo "<tr><th>ITILCategory</th><th>Group</th><th>Members #</th><th>Setting</th></tr>";
+        echo "<tr><th colspan='4'><hr /></th></tr>";
+        echo "<tr><th>ITIL Category</th><th>Grupo</th><th>Número de Membros</th><th>Configuração</th></tr>";
 
-        /**
-         * render each row for profile and settings
-         */
-        foreach (self::getSettings() as $row) {
+        foreach ($settings as $row) {
             $id = $row['id'];
             $itilcategories_id = $row['itilcategories_id'];
-            $category_name = $row['category_name'];
-            $group_name = isset($row['group_name']) ? $row['group_name'] : "<em>No group assigned</em>";
-            $num_group_members = isset($row['group_name']) ? $row['num_group_members'] : "<em>N/A</em>";
+            $category_name = Html::cleanInputText($row['category_name']);
+            $group_name = isset($row['group_name']) ? Html::cleanInputText($row['group_name']) : "<em>Nenhum grupo atribuído</em>";
+            $num_group_members = isset($row['num_group_members']) ? Html::cleanInputText($row['num_group_members']) : "<em>N/A</em>";
             $is_active = $row['is_active'];
 
-            echo "<tr><td>$category_name</td><td>$group_name</td><td>$num_group_members</td>";
+            echo "<tr>";
+            echo "<td>{$category_name}</td>";
+            echo "<td>{$group_name}</td>";
+            echo "<td>{$num_group_members}</td>";
             echo "<td>";
-            echo Html::hidden('itilcategories_id_' . $id, ['value' => $itilcategories_id]);
-            echo "<input type='radio' name='is_active_$id' value='1'";
-            if ($is_active) {
-                echo "checked='checked'";
-            }
-            echo "> Enabled&nbsp;&nbsp;";
-            echo "<input type='radio' name='is_active_$id' value='0'";
-            if (!$is_active) {
-                echo "checked='checked'";
-            }
-            echo "> Disabled</td></tr>";
+            echo Html::hidden("itilcategories_id_{$id}", ['value' => $itilcategories_id]);
+            echo "<input type='radio' name='is_active_{$id}' value='1' " . ($is_active ? "checked='checked'" : "") . "> Ativado&nbsp;&nbsp;";
+            echo "<input type='radio' name='is_active_{$id}' value='0' " . (!$is_active ? "checked='checked'" : "") . "> Desativado";
+            echo "</td>";
+            echo "</tr>";
         }
-        /**
-         * controls
-         */
+
         echo "<tr><td colspan='4'><hr/></td></tr>";
-        echo "<tr><td colspan='3'>&nbsp;<td><input type='submit' name='save' class='submit' value=" . __('Save') . ">&nbsp;&nbsp;<input type='submit' class='submit' name='cancel' value=" . __('Cancel') . "></td></tr>";
+		echo "<tr><td colspan='4' style='text-align: right;'><input type='submit' name='save' class='submit' value=" . __('Salvar') . ">&nbsp;&nbsp;<input type='submit' class='submit' name='cancel' value=" . __('Cancelar') . "></td></tr>";
         echo "</table>";
     }
 
     protected static function getSettings() {
-        $rrAssignmentsEntity = new PluginRoundRobinRRAssignmentsEntity();
-        return $rrAssignmentsEntity->getAll();
+        $instance = new PluginTicketBalanceRRAssignmentsEntity();
+        return $instance->getAll();
     }
 
-    protected static function getAutoAssignGoup() {
-        $rrAssignmentsEntity = new PluginRoundRobinRRAssignmentsEntity();
-        return $rrAssignmentsEntity->getOptionAutoAssignGroup();
+    protected static function getAutoAssignGroup() {
+        $instance = new PluginTicketBalanceRRAssignmentsEntity();
+        return $instance->getOptionAutoAssignGroup();
     }
 
-    public static function saveSettings() {
-        PluginRoundRobinLogger::addWarning(__METHOD__ . ' - POST: ' . print_r($_POST, true));
-        $rrAssignmentsEntity = new PluginRoundRobinRRAssignmentsEntity();
+    public function saveSettings() {
+		// Validação do token CSRF
+		if (!isset($_POST['_glpi_csrf_token']) || $_POST['_glpi_csrf_token'] !== $_SESSION['_glpi_csrf_token']) {
+			die('Token CSRF inválido');
+		}
+		
+        PluginTicketBalanceLogger::addWarning(__METHOD__ . ' - POST: ' . print_r($_POST, true));
+        $rrAssignmentsEntity = new PluginTicketBalanceRRAssignmentsEntity();
 
         /**
-         * save option(s)
+         * Salvar opção(ões)
          */
         $rrAssignmentsEntity->updateAutoAssignGroup($_POST['auto_assign_group']);
 
         /**
-         * save all assignments
+         * Salvar todas as atribuições
          */
         foreach (self::getSettings() as $row) {
             $itilCategoryId = $_POST["itilcategories_id_{$row['id']}"];
@@ -157,5 +128,4 @@ EOT;
             $rrAssignmentsEntity->updateIsActive($itilCategoryId, $newValue);
         }
     }
-
 }
