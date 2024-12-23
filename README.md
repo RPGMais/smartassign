@@ -8,4 +8,4 @@ The plugin adapt its behavior when the group or the members are changed.
 
 While setting up the plugin you can decide the categories for which the plugin should work and if adding also the same group as assignee (useful to allow other technicians to manage the queue in case of absence for example).
 
-enjoy!
+enjoy! Teste
