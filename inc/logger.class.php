@@ -1,106 +1,100 @@
 <?php
 
-use Monolog\Logger;
-use Monolog\Handler\StreamHandler;
+/**
+ * -------------------------------------------------------------------------
+ * RoundRobin plugin for GLPI
+ * -------------------------------------------------------------------------
+ *
+ * LICENSE
+ *
+ * This file is part of RoundRobin GLPI Plugin.
+ *
+ * RoundRobin is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * RoundRobin is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with RoundRobin. If not, see <http://www.gnu.org/licenses/>.
+ * -------------------------------------------------------------------------
+ * @copyright Copyright (C) 2022 by initiativa s.r.l. - http://www.initiativa.it
+ * @license   GPLv3 https://www.gnu.org/licenses/gpl-3.0.html
+ * @link      https://github.com/initiativa/roundrobin
+ * -------------------------------------------------------------------------
+ */
+class PluginRoundRobinLogger {
 
-class PluginTicketBalanceLogger {
+    protected static $DEBUG = 100;
+    protected static $INFO = 200;
+    protected static $NOTICE = 250;
+    protected static $WARNING = 300;
+    protected static $ERROR = 400;
+    protected static $CRITICAL = 500;
+    protected static $ALERT = 550;
+    protected static $EMERGENCY = 600;
 
-    protected static $logger = null; // Define a propriedade estática
-
-    protected static function getLogger() {
-        if (self::$logger === null) {
-            // Cria a nova instância do logger
-            self::$logger = new Logger('ticketbalance');
-
-            // Caminho do diretório de logs
-            $logDir = PLUGIN_TICKETBALANCE_DIR . '/logs/';
-            $logFile = $logDir . 'ticketbalance.log';
-
-            // Verifica se a pasta de logs existe, caso contrário cria
-            if (!file_exists($logDir)) {
-                if (!mkdir($logDir, 0755, true)) {
-                    error_log("Erro: Não foi possível criar o diretório de logs: $logDir");
-                    return null;
-                }
-            }
-
-            // Verifica se o arquivo de log existe, caso contrário cria
-            if (!file_exists($logFile)) {
-                if (!touch($logFile)) {
-                    error_log("Erro: Não foi possível criar o arquivo de log: $logFile");
-                    return null;
-                }
-                chmod($logFile, 0644); // Define permissões de leitura e escrita
-            }
-
-            // Adiciona o manipulador de arquivos ao logger
-            try {
-                self::$logger->pushHandler(new StreamHandler($logFile, Logger::DEBUG));
-            } catch (\Exception $e) {
-                error_log("Erro ao configurar o logger: " . $e->getMessage());
-                return null;
-            }
-        }
-
-        return self::$logger;
-    }
-
+    /**
+     * 
+     * @global Logger $PHPLOGGER
+     * @param int $type
+     * @param string $message
+     * @param array $details
+     */
     protected static function add($type, $message, $details = []) {
-        $logger = self::getLogger();
-
-        if ($logger === null) {
-            // Se o logger não foi configurado corretamente, grava no log PHP padrão
-            error_log("[$type] $message - " . json_encode($details));
-            return;
-        }
-
-        // Mapeia os tipos para os níveis do Monolog
+        global $PHPLOGGER;
         switch ($type) {
-            case 100:
-                $logger->debug($message, $details);
+            case self::$DEBUG:
+                $recordType = Monolog\Logger::DEBUG;
                 break;
-            case 200:
-                $logger->info($message, $details);
+            case self::$INFO:
+                $recordType = Monolog\Logger::INFO;
                 break;
-            case 250:
-                $logger->notice($message, $details);
+            case self::$NOTICE:
+                $recordType = Monolog\Logger::NOTICE;
                 break;
-            case 300:
-                $logger->warning($message, $details);
+            case self::$WARNING:
+                $recordType = Monolog\Logger::WARNING;
                 break;
-            case 400:
-                $logger->error($message, $details);
+            case self::$ERROR:
+                $recordType = Monolog\Logger::ERROR;
                 break;
-            case 500:
-                $logger->critical($message, $details);
+            case self::$CRITICAL:
+                $recordType = Monolog\Logger::CRITICAL;
                 break;
             default:
-                $logger->info($message, $details);
+                $recordType = Monolog\Logger::INFO;
                 break;
         }
+        $PHPLOGGER->addRecord($recordType, $message, $details);
     }
 
     public static function addDebug($message, $details = []) {
-        self::add(100, $message, $details);
+        self::add(self::$DEBUG, $message, $details);
     }
 
     public static function addInfo($message, $details = []) {
-        self::add(200, $message, $details);
+        self::add(self::$INFO, $message, $details);
     }
 
     public static function addNotice($message, $details = []) {
-        self::add(250, $message, $details);
+        self::add(self::$NOTICE, $message, $details);
     }
 
     public static function addWarning($message, $details = []) {
-        self::add(300, $message, $details);
+        self::add(self::$WARNING, $message, $details);
     }
 
     public static function addError($message, $details = []) {
-        self::add(400, $message, $details);
+        self::add(self::$ERROR, $message, $details);
     }
 
     public static function addCritical($message, $details = []) {
-        self::add(500, $message, $details);
+        self::add(self::$CRITICAL, $message, $details);
     }
+
 }

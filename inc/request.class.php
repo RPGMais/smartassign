@@ -1,6 +1,33 @@
 <?php
 
-class PluginTicketBalanceRequest {
+/**
+ * -------------------------------------------------------------------------
+ * RoundRobin plugin for GLPI
+ * -------------------------------------------------------------------------
+ *
+ * LICENSE
+ *
+ * This file is part of RoundRobin GLPI Plugin.
+ *
+ * RoundRobin is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * RoundRobin is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with RoundRobin. If not, see <http://www.gnu.org/licenses/>.
+ * -------------------------------------------------------------------------
+ * @copyright Copyright (C) 2022 by initiativa s.r.l. - http://www.initiativa.it
+ * @license   GPLv3 https://www.gnu.org/licenses/gpl-3.0.html
+ * @link      https://github.com/initiativa/roundrobin
+ * -------------------------------------------------------------------------
+ */
+class PluginRoundRobinRequest {
 
     protected static function getInputParam($type, $key) {
         $value = filter_input($type, $key);
@@ -26,7 +53,7 @@ class PluginTicketBalanceRequest {
     public static function getCurrentProfileSettings() {
         global $DB;
 
-        $pluginCode = TicketBalanceConfigClass::$PLUGIN_TICKETBALANCE_CODE;
+        $pluginCode = PluginRoundRobinConfig::$PLUGIN_ROUNDROBIN_CODE;
         $settingTableConfig = "glpi_plugin_" . $pluginCode . "_config";
         $profileId = self::getUserProfileId();
         $sql = <<< EOT
@@ -38,7 +65,7 @@ EOT;
         $configArray = iterator_to_array($collection);
 
         $settingsArray = iterator_to_array($collection);
-        PluginTicketBalanceLogger::addWarning(__METHOD__ . " - profile_id: $profileId results: " . var_export($settingsArray, true));
+        PluginRoundRobinLogger::addWarning(__METHOD__ . " - profile_id: $profileId results: " . var_export($settingsArray, true));
         return count($settingsArray) === 1 ? $settingsArray[0]['hasTypeAsCategory'] : null;
     }
 
@@ -61,7 +88,7 @@ EOT;
         Session::checkLoginUser();
 
         $plugin = new Plugin();
-        if (!$plugin->isActivated(TicketBalanceConfigClass::$PLUGIN_TICKETBALANCE_CODE)) {
+        if (!$plugin->isActivated(PluginRoundRobinConfig::$PLUGIN_ROUNDROBIN_CODE)) {
             exit;
         }
     }

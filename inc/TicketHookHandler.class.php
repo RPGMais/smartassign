@@ -1,8 +1,35 @@
 <?php
 
+/**
+ * -------------------------------------------------------------------------
+ * RoundRobin plugin for GLPI
+ * -------------------------------------------------------------------------
+ *
+ * LICENSE
+ *
+ * This file is part of RoundRobin GLPI Plugin.
+ *
+ * RoundRobin is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * RoundRobin is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with RoundRobin. If not, see <http://www.gnu.org/licenses/>.
+ * -------------------------------------------------------------------------
+ * @copyright Copyright (C) 2022 by initiativa s.r.l. - http://www.initiativa.it
+ * @license   GPLv3 https://www.gnu.org/licenses/gpl-3.0.html
+ * @link      https://github.com/initiativa/roundrobin
+ * -------------------------------------------------------------------------
+ */
 require_once 'IHookItemHandler.php';
 
-class PluginTicketBalanceTicketHookHandler extends CommonDBTM implements IPluginTicketBalanceHookItemHandler {
+class PluginRoundRobinTicketHookHandler extends CommonDBTM implements IPluginRoundRobinHookItemHandler {
 
     protected $DB;
     protected $rrAssignmentsEntity;
@@ -11,16 +38,16 @@ class PluginTicketBalanceTicketHookHandler extends CommonDBTM implements IPlugin
         global $DB;
 
         $this->DB = $DB;
-        $this->rrAssignmentsEntity = new PluginTicketBalanceRRAssignmentsEntity();
+        $this->rrAssignmentsEntity = new PluginRoundRobinRRAssignmentsEntity();
     }
 
     public function itemAdded(CommonDBTM $item) {
-        PluginTicketBalanceLogger::addWarning(__METHOD__ . " - Item Type: " . $item->getType());
+        PluginRoundRobinLogger::addWarning(__METHOD__ . " - Item Type: " . $item->getType());
         if ($item->getType() !== 'Ticket') {
             return;
         }
-        PluginTicketBalanceLogger::addWarning(__METHOD__ . " - TicketId: " . $this->getTicketId($item));
-        PluginTicketBalanceLogger::addWarning(__METHOD__ . " - CategoryId: " . $this->getTicketCategory($item));
+        PluginRoundRobinLogger::addWarning(__METHOD__ . " - TicketId: " . $this->getTicketId($item));
+        PluginRoundRobinLogger::addWarning(__METHOD__ . " - CategoryId: " . $this->getTicketCategory($item));
         $this->assignTicket($item);
     }
 
@@ -57,14 +84,14 @@ class PluginTicketBalanceTicketHookHandler extends CommonDBTM implements IPlugin
 EOT;
         $resultCollection = $this->DB->queryOrDie($sql, $this->DB->error());
         $resultArray = iterator_to_array($resultCollection);
-        PluginTicketBalanceLogger::addWarning(__METHOD__ . ' - result array: ', $resultArray);
+        PluginRoundRobinLogger::addWarning(__METHOD__ . ' - result array: ', $resultArray);
         return $resultArray;
     }
 
     protected function assignTicket(CommonDBTM $item) {
         $itilcategoriesId = $this->getTicketCategory($item);
         if (($lastAssignmentIndex = $this->getLastAssignmentIndex($item)) === false) {
-            PluginTicketBalanceLogger::addWarning(__FUNCTION__ . ' - nothing to to (category is disabled or not configured; getLastAssignmentIndex: ' . $lastAssignmentIndex);
+            PluginRoundRobinLogger::addWarning(__FUNCTION__ . ' - nothing to to (category is disabled or not configured; getLastAssignmentIndex: ' . $lastAssignmentIndex);
             return;
         }
         $categoryGroupMembers = $this->getGroupsUsersByCategory($this->getTicketCategory($item));
@@ -84,11 +111,7 @@ EOT;
                 $newAssignmentIndex = 0;
             }
         }
-		if ($this->rrAssignmentsEntity->getOptionAutoAssignUser() === 1) {
-			$this->rrAssignmentsEntity->updateLastAssignmentIndexCategoria($itilcategoriesId, $newAssignmentIndex);
-		} else {
-			$this->rrAssignmentsEntity->updateLastAssignmentIndexGlobal($itilcategoriesId, $newAssignmentIndex);
-		}
+        $this->rrAssignmentsEntity->updateLastAssignmentIndex($itilcategoriesId, $newAssignmentIndex);
 
         /**
          * set the assignment
@@ -106,13 +129,13 @@ EOT;
 
     protected function setAssignment($ticketId, $userId, $itilcategoriesId) {
         /**
-         * remove any previous user assignment
+         * remove any prevous user assignment
          */
         $sqlDelete_glpi_tickets_users = <<< EOT
             DELETE FROM glpi_tickets_users 
-            WHERE tickets_id = {$ticketId} AND type = 2;
+            WHERE tickets_id = {$ticketId};
 EOT;
-        PluginTicketBalanceLogger::addWarning(__FUNCTION__ . ' - sqlDelete_glpi_tickets_users: ' . $sqlDelete_glpi_tickets_users);
+        PluginRoundRobinLogger::addWarning(__FUNCTION__ . ' - sqlDelete_glpi_tickets_users: ' . $sqlDelete_glpi_tickets_users);
         $this->DB->queryOrDie($sqlDelete_glpi_tickets_users, $this->DB->error());
 
         /**
@@ -123,36 +146,37 @@ EOT;
             WHERE tickets_id = {$ticketId};
 EOT;
 
-        PluginTicketBalanceLogger::addWarning(__FUNCTION__ . ' - sqlDelete_glpi_groups_tickets: ' . $sqlDelete_glpi_groups_tickets);
+        PluginRoundRobinLogger::addWarning(__FUNCTION__ . ' - sqlDelete_glpi_groups_tickets: ' . $sqlDelete_glpi_groups_tickets);
         $this->DB->queryOrDie($sqlDelete_glpi_groups_tickets, $this->DB->error());
 
         /**
          * insert the new assignment, based on rr
          */
         $sqlInsert_glpi_tickets_users = <<< EOT
-                    INSERT INTO glpi_tickets_users (tickets_id, users_id, type, use_notification, alternative_email) VALUES ({$ticketId}, {$userId}, 2, 1, '')
+                    INSERT INTO glpi_tickets_users (tickets_id, users_id, type, use_notification) VALUES ({$ticketId}, {$userId}, 2, 0)
 EOT;
-        PluginTicketBalanceLogger::addWarning(__FUNCTION__ . ' - sqlInsert_glpi_tickets_users: ' . $sqlInsert_glpi_tickets_users);
+        PluginRoundRobinLogger::addWarning(__FUNCTION__ . ' - sqlInsert_glpi_tickets_users: ' . $sqlInsert_glpi_tickets_users);
         $this->DB->queryOrDie($sqlInsert_glpi_tickets_users, $this->DB->error());
 
-        // if auto group assign is enabled assign the group too
-
+        /**
+         * if auto group assign is enabled assign the group too
+         */
         if ($this->rrAssignmentsEntity->getOptionAutoAssignGroup() === 1) {
             $groups_id = $this->rrAssignmentsEntity->getGroupByItilCategory($itilcategoriesId);
             $sqlInsert_glpi_tickets_groups = <<< EOT
                     INSERT INTO glpi_groups_tickets (tickets_id, groups_id, type) VALUES ({$ticketId}, {$groups_id}, 2)
 EOT;
-            PluginTicketBalanceLogger::addWarning(__FUNCTION__ . ' - sqlInsert_glpi_tickets_groups: ' . $sqlInsert_glpi_tickets_groups);
+            PluginRoundRobinLogger::addWarning(__FUNCTION__ . ' - sqlInsert_glpi_tickets_groups: ' . $sqlInsert_glpi_tickets_groups);
             $this->DB->queryOrDie($sqlInsert_glpi_tickets_groups, $this->DB->error());
         }
     }
 
     public function itemPurged(CommonDBTM $item) {
-        PluginTicketBalanceLogger::addWarning(__FUNCTION__ . ' - nothing to do');
+        PluginRoundRobinLogger::addWarning(__FUNCTION__ . ' - nothing to do');
     }
 
     public function itemDeleted(CommonDBTM $item) {
-        PluginTicketBalanceLogger::addWarning(__FUNCTION__ . ' - nothing to do');
+        PluginRoundRobinLogger::addWarning(__FUNCTION__ . ' - nothing to do');
     }
 
 }
