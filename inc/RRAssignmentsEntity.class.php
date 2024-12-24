@@ -90,7 +90,7 @@ EOT;
 					CREATE TABLE IF NOT EXISTS {$this->rrOptionsTable} (
 						id INT(11) UNSIGNED NOT NULL auto_increment,
 						auto_assign_group INT(1) DEFAULT 1,
-						auto_assign_user INT(1) DEFAULT 1,
+						auto_assign_tipe INT(1) DEFAULT 1,
 						PRIMARY KEY (id)
 					) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
 EOT;
@@ -159,7 +159,7 @@ EOT;
 
         // inserir entrada
 		$sqlInsert = <<< EOT
-				INSERT INTO {$this->rrOptionsTable} (auto_assign_group, auto_assign_user)
+				INSERT INTO {$this->rrOptionsTable} (auto_assign_group, auto_assign_tipe)
 				VALUES (1, 1)
 EOT;
         PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - sqlInsert: ' . $sqlInsert);
@@ -176,14 +176,14 @@ EOT;
         return $resultArray[0]['auto_assign_group'];
     }
 
-    public function getOptionAutoAssignUser() {
+    public function getOptionAutoAssignTipe() {
         $sql = <<< EOT
-                SELECT auto_assign_user FROM {$this->rrOptionsTable} LIMIT 1
+                SELECT auto_assign_tipe FROM {$this->rrOptionsTable} LIMIT 1
 EOT;
         PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - sql: ' . $sql);
         $resultCollection = $this->DB->queryOrDie($sql, $this->DB->error());
         $resultArray = iterator_to_array($resultCollection);
-        return $resultArray[0]['auto_assign_user'];
+        return $resultArray[0]['auto_assign_tipe'];
     }
 
     public function getGroupByItilCategory($itilCategory) {
@@ -216,15 +216,15 @@ EOT;
 		$DB->queryOrDie($sqlUpdate, $DB->error());
 	}
 
-	public function updateAutoAssignUser($autoAssignUser) {
+	public function updateAutoAssignTipe($autoAssignTipe) {
 		global $DB; // Certifique-se de usar a instância global do banco de dados
 
 		// Escape do valor para evitar SQL Injection
-		$escapedValue = $DB->escape($autoAssignUser);
+		$escapedValue = $DB->escape($autoAssignTipe);
 
 		$sqlUpdate = <<< EOT
 			UPDATE {$this->rrOptionsTable}
-			SET auto_assign_user = {$escapedValue}
+			SET auto_assign_tipe = {$escapedValue}
 			WHERE id = 1
 EOT;
 
@@ -257,14 +257,23 @@ EOT;
         $this->DB->queryOrDie($sqlUpdate, $this->DB->error());
     }
 
-    public function updateLastAssignmentIndexGlobal($itilcategoriesId, $index) {
-        $sqlUpdate = <<< EOT
-                UPDATE {$this->rrAssignmentTable}
-                SET last_assignment_index = {$index}
-EOT;
-        PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - sqlUpdate: ' . $sqlUpdate);
-        $this->DB->queryOrDie($sqlUpdate, $this->DB->error());
-    }
+    public function updateLastAssignmentIndexGrupo($itilcategoriesId, $index) {
+        // Obtém o grupo responsável pela categoria fornecida
+        $groupId = $this->getGroupByItilCategory($itilcategoriesId);
+    
+        if ($groupId !== false) {
+            $sqlUpdate = <<<EOT
+                UPDATE {$this->rrAssignmentTable} AS ra
+                JOIN glpi_itilcategories AS ic ON ra.itilcategories_id = ic.id
+                SET ra.last_assignment_index = {$index}
+                WHERE ra.is_active = 1 AND ic.groups_id = {$groupId}
+    EOT;
+            PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - sqlUpdate: ' . $sqlUpdate);
+            $this->DB->queryOrDie($sqlUpdate, $this->DB->error());
+        } else {
+            PluginSmartAssignLogger::addError(__FUNCTION__ . " - Grupo não encontrado para a categoria: {$itilcategoriesId}");
+        }
+    }    
 
     public function updateIsActive($itilcategoriesId, $isActive) {
         $sqlUpdate = <<< EOT

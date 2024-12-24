@@ -84,10 +84,10 @@ EOT;
                 $newAssignmentIndex = 0;
             }
         }
-		if ($this->rrAssignmentsEntity->getOptionAutoAssignUser() === 1) {
+		if ($this->rrAssignmentsEntity->getOptionAutoAssignTipe() === 1) {
 			$this->rrAssignmentsEntity->updateLastAssignmentIndexCategoria($itilcategoriesId, $newAssignmentIndex);
 		} else {
-			$this->rrAssignmentsEntity->updateLastAssignmentIndexGlobal($itilcategoriesId, $newAssignmentIndex);
+			$this->rrAssignmentsEntity->updateLastAssignmentIndexGrupo($itilcategoriesId, $newAssignmentIndex);
 		}
 
         /**

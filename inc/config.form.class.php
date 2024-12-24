@@ -46,7 +46,7 @@ EOT;
 
     public function displayContent() {
         $auto_assign_group = Html::cleanInputText(self::getAutoAssignGroup());
-        $auto_assign_user = Html::cleanInputText(self::getAutoAssignUser());
+        $auto_assign_tipe = Html::cleanInputText(self::getAutoAssignTipe());
         $settings = self::getSettings();
 
         // Gerar o token CSRF e armazená-lo na sessão
@@ -69,10 +69,11 @@ EOT;
         echo "</th></tr>";
 
         echo "<tr><th colspan='4'>";
-        echo "Rodizio por categoria, ou global? &nbsp;&nbsp;";
-        echo "<input type='radio' name='auto_assign_user' value='1'" . ($auto_assign_user ? " checked='checked'" : "") . "> Categoria&nbsp;&nbsp;";
-        echo "<input type='radio' name='auto_assign_user' value='0'" . (!$auto_assign_user ? " checked='checked'" : "") . "> Global";
-        echo "</th></tr>";
+        echo "Atribuição por categoria, ou grupo encarregado? &nbsp;&nbsp;";
+        echo "<input type='radio' name='auto_assign_tipe' value='1'" . ($auto_assign_tipe ? " checked='checked'" : "") . "> Categoria&nbsp;&nbsp;";
+        echo "<input type='radio' name='auto_assign_tipe' value='0'" . (!$auto_assign_tipe ? " checked='checked'" : "") . "> Grupo";
+        echo "<br><span style='font-size: 12px; color: #555;'>Quando categoria, a divisão é feita igualitariamente dentro de cada categoria, com base no grupo. Quando grupo, a divisão é feita igualitariamente entre categorias com o mesmo grupo.</span>";
+        echo "</th></tr>";  
 
         echo "<tr><th colspan='4'><hr /></th></tr>";
         echo "<tr><th>ITIL Category</th><th>Grupo</th><th>Número de Membros</th><th>Configuração</th></tr>";
@@ -112,9 +113,9 @@ EOT;
         return $instance->getOptionAutoAssignGroup();
     }
 
-    protected static function getAutoAssignUser() {
+    protected static function getAutoAssignTipe() {
         $instance = new PluginSmartAssignRRAssignmentsEntity();
-        return $instance->getOptionAutoAssignUser();
+        return $instance->getOptionAutoAssignTipe();
     }
 
     public function saveSettings() {
@@ -128,7 +129,7 @@ EOT;
 
         //Salvar opções)
         $rrAssignmentsEntity->updateAutoAssignGroup($_POST['auto_assign_group']);
-        $rrAssignmentsEntity->updateAutoAssignUser($_POST['auto_assign_user']);
+        $rrAssignmentsEntity->updateAutoAssignTipe($_POST['auto_assign_tipe']);
 
         /**
          * Salvar todas as atribuições
