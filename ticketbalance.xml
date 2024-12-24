@@ -1,34 +1,34 @@
-<?xml version="1.1" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <root>
     <name>TicketBalance</name>
     <key>ticketbalance</key>
     <state>stable</state>
-    <logo>https://raw.githubusercontent.com/RPGMais/ticketbalance/master/pics/ticketbalance-logo.png</logo>
-	<description>
-		<short>
-			<en>Este plugin permite a atribuição de um ticket utilizando uma política de ticketbalance.</en>
-			<it>Questo plugin permette l'assegnazione di un ticket ad un tecnico utilizzando una politica di ticketbalance.</it>
-			<pt_br>Este plugin permite a atribuição de um chamado utilizando uma política de ticketbalance.</pt_br>
-		</short>
-		<long>
-			<en>Este plugin permite a atribuição de um ticket utilizando uma política de ticketbalance. Ele considera "o grupo responsável pelo hardware" vinculado a uma categoria para obter os membros do grupo e atribuir um ticket a um deles utilizando uma política de ticketbalance.</en>
-			<it>Questo plugin permette l'assegnazione di un ticket ad un tecnico utilizzando una politica di ticketbalance. Il plugin valuta il gruppo indicato nel campo "gruppo incaricato dell'hardware" nelle varie categorie, ed assegna il ticket ad uno dei membri del gruppo, ruotando i membri ad ogni nuovo ticket con una politica di tipo ticketbalance.</it>
-			<pt_br>Este plugin permite a atribuição de um chamado utilizando uma política de ticketbalance. Ele considera "o grupo responsável pelo hardware" vinculado a uma categoria para obter os membros do grupo e atribuir um chamado a um deles utilizando uma política de ticketbalance.</pt_br>
-		</long>
-	</description>
+    <logo>https://raw.githubusercontent.com/RPGMais/ticketbalance/refs/heads/main/pics/roundrobin-logo.png</logo>
+    <description>
+        <short>
+            <en>This plugin allows the assignment of a ticket using a round-robin policy.</en>
+            <it>Questo plugin permette l'assegnazione di un ticket ad un tecnico utilizzando una politica di ticketbalance.</it>
+            <pt_BR>Este plugin permite a atribuição de um chamado utilizando uma política de ticketbalance.</pt_BR>
+        </short>
+        <long>
+            <en>This plugin allows the assignment of a ticket using a round-robin policy. It considers "the group in charge of the hardware" linked to a category to get the members of the group and assigns a ticket to one of them using a round-robin policy.</en>
+            <it>Questo plugin permette l'assegnazione di un ticket ad un tecnico utilizzando una politica di ticketbalance. Il plugin valuta il gruppo indicato nel campo "gruppo incaricato dell'hardware" nelle varie categorie, ed assegna il ticket ad uno dei membri del gruppo, ruotando i membri ad ogni nuovo ticket con una politica di tipo ticketbalance.</it>
+            <pt_BR>Este plugin permite a atribuição de um chamado utilizando uma política de ticketbalance. Ele considera "o grupo responsável pelo hardware" vinculado a uma categoria para obter os membros do grupo e atribuir um chamado a um deles utilizando uma política de ticketbalance.</pt_BR>
+        </long>
+    </description>
     <homepage>https://github.com/RPGMais/ticketbalance</homepage>
     <download>https://github.com/RPGMais/ticketbalance/releases</download>
     <issues>https://github.com/RPGMais/ticketbalance/issues</issues>
-    <readme>https://raw.githubusercontent.com/RPGMais/ticketbalance/master/README.md</readme>
+    <readme>https://github.com/RPGMais/ticketbalance/blob/main/README.md</readme>
     <authors>
         <author>Richard Loureiro</author>
     </authors>
     <versions>
         <version>
-            <num>1.1.0</num>
+            <num>1.2.0</num>
             <compatibility>9.5</compatibility>
-            <compatibility>10.0.17</compatibility>
-            <download_url>https://github.com/RPGMais/ticketbalance/releases/download</download_url>
+            <compatibility>10</compatibility>
+            <download_url>https://github.com/RPGMais/ticketbalance/releases</download_url>
         </version>
     </versions>
     <langs>
@@ -46,5 +46,10 @@
             <tag>Assistenza</tag>
             <tag>Tecnico</tag>
         </it>
+        <pt_BR>
+            <tag>Chamado</tag>
+            <tag>Assistência</tag>
+            <tag>Técnico</tag>
+        </pt_BR>
     </tags>
 </root>

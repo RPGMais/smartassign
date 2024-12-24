@@ -69,14 +69,14 @@ EOT;
          */
         if (!$this->DB->tableExists($this->rrAssignmentTable)) {
             $sqlCreateAssign = <<< EOT
-                    CREATE TABLE IF NOT EXISTS {$this->rrAssignmentTable} (
-                        id INT(11) NOT NULL auto_increment,
-                        itilcategories_id INT(11),
-                        is_active INT(1) DEFAULT 0,
-                        last_assignment_index INT(11) DEFAULT NULL,
-                        PRIMARY KEY (id),
-                        UNIQUE INDEX ix_itilcategories_uq (itilcategories_id ASC)
-                    ) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
+					CREATE TABLE IF NOT EXISTS {$this->rrAssignmentTable} (
+						id INT(11) NOT NULL auto_increment,
+						itilcategories_id INT(11),
+						is_active INT(1) DEFAULT 0,
+						last_assignment_index INT(11) DEFAULT NULL,
+						PRIMARY KEY (id),
+						UNIQUE INDEX ix_itilcategories_uq (itilcategories_id ASC)
+					) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
 EOT;
             PluginTicketBalanceLogger::addWarning(__FUNCTION__ . ' - sqlCreate: ' . $sqlCreateAssign);
             $this->DB->queryOrDie($sqlCreateAssign, $this->DB->error());
@@ -87,11 +87,12 @@ EOT;
          */
         if (!$this->DB->tableExists($this->rrOptionsTable)) {
             $sqlCreateOption = <<< EOT
-                    CREATE TABLE IF NOT EXISTS {$this->rrOptionsTable} (
-                        id INT(11) NOT NULL auto_increment,
-                        auto_assign_group INT(1) DEFAULT 1,
-                        PRIMARY KEY (id)
-                    ) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
+					CREATE TABLE IF NOT EXISTS {$this->rrOptionsTable} (
+						id INT(11) UNSIGNED NOT NULL auto_increment,
+						auto_assign_group INT(1) DEFAULT 1,
+						auto_assign_user INT(1) DEFAULT 1,
+						PRIMARY KEY (id)
+					) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
 EOT;
             PluginTicketBalanceLogger::addWarning(__FUNCTION__ . ' - sqlCreate: ' . $sqlCreateOption);
             $this->DB->queryOrDie($sqlCreateOption, $this->DB->error());
@@ -156,11 +157,10 @@ EOT;
     public function insertOptions() {
         PluginTicketBalanceLogger::addWarning(__FUNCTION__ . ' - entrou...');
 
-        /**
-         * inserir uma única entrada
-         */
-        $sqlInsert = <<< EOT
-                INSERT INTO {$this->rrOptionsTable} (auto_assign_group) VALUES (1)
+        // inserir entrada
+		$sqlInsert = <<< EOT
+				INSERT INTO {$this->rrOptionsTable} (auto_assign_group, auto_assign_user)
+				VALUES (1, 1)
 EOT;
         PluginTicketBalanceLogger::addWarning(__FUNCTION__ . ' - sqlInsert: ' . $sqlInsert);
         $this->DB->queryOrDie($sqlInsert, $this->DB->error());
@@ -174,6 +174,16 @@ EOT;
         $resultCollection = $this->DB->queryOrDie($sql, $this->DB->error());
         $resultArray = iterator_to_array($resultCollection);
         return $resultArray[0]['auto_assign_group'];
+    }
+
+    public function getOptionAutoAssignUser() {
+        $sql = <<< EOT
+                SELECT auto_assign_user FROM {$this->rrOptionsTable} LIMIT 1
+EOT;
+        PluginTicketBalanceLogger::addWarning(__FUNCTION__ . ' - sql: ' . $sql);
+        $resultCollection = $this->DB->queryOrDie($sql, $this->DB->error());
+        $resultArray = iterator_to_array($resultCollection);
+        return $resultArray[0]['auto_assign_user'];
     }
 
     public function getGroupByItilCategory($itilCategory) {
@@ -206,6 +216,24 @@ EOT;
 		$DB->queryOrDie($sqlUpdate, $DB->error());
 	}
 
+	public function updateAutoAssignUser($autoAssignUser) {
+		global $DB; // Certifique-se de usar a instância global do banco de dados
+
+		// Escape do valor para evitar SQL Injection
+		$escapedValue = $DB->escape($autoAssignUser);
+
+		$sqlUpdate = <<< EOT
+			UPDATE {$this->rrOptionsTable}
+			SET auto_assign_user = {$escapedValue}
+			WHERE id = 1
+EOT;
+
+		PluginTicketBalanceLogger::addWarning(__FUNCTION__ . ' - sqlUpdate: ' . $sqlUpdate);
+
+		// Executa a query
+		$DB->queryOrDie($sqlUpdate, $DB->error());
+	}
+
     public function deleteItilCategory($itilCategory) {
         PluginTicketBalanceLogger::addWarning(__FUNCTION__ . ' - entrou...');
 
@@ -219,11 +247,20 @@ EOT;
         $this->DB->queryOrDie($sqlDelete, $this->DB->error());
     }
 
-    public function updateLastAssignmentIndex($itilcategoriesId, $index) {
+    public function updateLastAssignmentIndexCategoria($itilcategoriesId, $index) {
         $sqlUpdate = <<< EOT
                 UPDATE {$this->rrAssignmentTable}
                 SET last_assignment_index = {$index}
                 WHERE itilcategories_id = {$itilcategoriesId}
+EOT;
+        PluginTicketBalanceLogger::addWarning(__FUNCTION__ . ' - sqlUpdate: ' . $sqlUpdate);
+        $this->DB->queryOrDie($sqlUpdate, $this->DB->error());
+    }
+
+    public function updateLastAssignmentIndexGlobal($itilcategoriesId, $index) {
+        $sqlUpdate = <<< EOT
+                UPDATE {$this->rrAssignmentTable}
+                SET last_assignment_index = {$index}
 EOT;
         PluginTicketBalanceLogger::addWarning(__FUNCTION__ . ' - sqlUpdate: ' . $sqlUpdate);
         $this->DB->queryOrDie($sqlUpdate, $this->DB->error());
@@ -260,10 +297,7 @@ EOT;
         }
     }
 
-    /**
-     * 
-     * @return array de array (id, itilcategories_id, category_name, groups_id, group_name, num_group_members, is_active)
-     */
+    //@return array de array (id, itilcategories_id, category_name, groups_id, group_name, num_group_members, is_active)
     public function getAll() {
         $sql_0 = <<< EOT
                 SELECT 
