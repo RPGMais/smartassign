@@ -3,7 +3,7 @@
 class SmartAssignConfigClass {
 
     public static $PLUGIN_SMARTASSIGN_ENV = 'desenvolvimento';
-    public static $PLUGIN_SMARTASSIGN_NAME = 'Ticket Balance';
+    public static $PLUGIN_SMARTASSIGN_NAME = 'Smart Assign';
     public static $PLUGIN_SMARTASSIGN_CODE = 'smartassign';
     public static $PLUGIN_SMARTASSIGN_VERSION = '1.2.0';
     public static $PLUGIN_SMARTASSIGN_AUTHOR = 'Richard Loureiro';
@@ -97,14 +97,14 @@ class SmartAssignConfigClass {
 	
 	// Define o nome do menu.
     static function getMenuName() {
-        return __('Ticket Balance');
+        return __('Smart Assign');
     }
 
     // Define o conteúdo do menu.
     static function getMenuContent() {
         global $CFG_GLPI;
         $menu = [];
-        $menu['title'] = __('Ticket Balance');
+        $menu['title'] = __('Smart Assign');
         $menu['page']  = $CFG_GLPI['root_doc'] . "/plugins/smartassign/front/config.form.php";
 		$menu['icon']  = 'fas fa-user-check';
         return $menu;
