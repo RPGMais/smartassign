@@ -63,7 +63,7 @@ EOT;
         echo "<tr><th colspan='4'><hr /></th></tr>";
 
         echo "<tr><th colspan='4'>";
-        echo "Atribuir também o grupo encarregado da Categoria ITIL? &nbsp;&nbsp;";
+        echo "Atribuir o grupo encarregado da Categoria ITIL? &nbsp;&nbsp;";
         echo "<input type='radio' name='auto_assign_group' value='1'" . ($auto_assign_group ? " checked='checked'" : "") . "> Sim&nbsp;&nbsp;";
         echo "<input type='radio' name='auto_assign_group' value='0'" . (!$auto_assign_group ? " checked='checked'" : "") . "> Não";
         echo "</th></tr>";
