@@ -5,16 +5,15 @@ use Monolog\Handler\StreamHandler;
 
 class PluginSmartAssignLogger {
 
-    protected static $logger = null; // Define a propriedade estática
+    protected static $logger = null;
 
     protected static function getLogger() {
         if (self::$logger === null) {
-            // Cria a nova instância do logger
             self::$logger = new Logger('smartassign');
 
-            // Caminho do diretório de logs
+            // Diretório e nome do arquivo de log baseado na data atual
             $logDir = PLUGIN_SMARTASSIGN_DIR . '/logs/';
-            $logFile = $logDir . 'smartassign.log';
+            $logFile = $logDir . 'smartassign_' . date('Y-m-d') . '.log';
 
             // Verifica se a pasta de logs existe, caso contrário cria
             if (!file_exists($logDir)) {
@@ -24,15 +23,6 @@ class PluginSmartAssignLogger {
                 }
             }
 
-            // Verifica se o arquivo de log existe, caso contrário cria
-            if (!file_exists($logFile)) {
-                if (!touch($logFile)) {
-                    error_log("Erro: Não foi possível criar o arquivo de log: $logFile");
-                    return null;
-                }
-                chmod($logFile, 0644); // Define permissões de leitura e escrita
-            }
-
             // Adiciona o manipulador de arquivos ao logger
             try {
                 self::$logger->pushHandler(new StreamHandler($logFile, Logger::DEBUG));
@@ -40,6 +30,9 @@ class PluginSmartAssignLogger {
                 error_log("Erro ao configurar o logger: " . $e->getMessage());
                 return null;
             }
+
+            // Limpa logs antigos
+            self::cleanOldLogs($logDir, 7);
         }
 
         return self::$logger;
@@ -49,12 +42,10 @@ class PluginSmartAssignLogger {
         $logger = self::getLogger();
 
         if ($logger === null) {
-            // Se o logger não foi configurado corretamente, grava no log PHP padrão
             error_log("[$type] $message - " . json_encode($details));
             return;
         }
 
-        // Mapeia os tipos para os níveis do Monolog
         switch ($type) {
             case 100:
                 $logger->debug($message, $details);
@@ -77,6 +68,29 @@ class PluginSmartAssignLogger {
             default:
                 $logger->info($message, $details);
                 break;
+        }
+    }
+
+    // Método para limpar logs com mais de X dias
+    protected static function cleanOldLogs($logDir, $days) {
+        if (!is_dir($logDir)) {
+            return;
+        }
+
+        $files = scandir($logDir);
+        $timeLimit = time() - ($days * 86400); // Calcula o tempo limite em segundos
+
+        foreach ($files as $file) {
+            $filePath = $logDir . $file;
+
+            // Ignorar diretórios e garantir que seja um arquivo
+            if (is_file($filePath) && strpos($file, 'smartassign_') === 0) {
+                $fileTime = filemtime($filePath); // Obtém o tempo de modificação do arquivo
+
+                if ($fileTime < $timeLimit) {
+                    unlink($filePath); // Remove arquivos antigos
+                }
+            }
         }
     }
 

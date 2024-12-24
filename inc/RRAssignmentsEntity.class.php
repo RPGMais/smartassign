@@ -237,9 +237,7 @@ EOT;
     public function deleteItilCategory($itilCategory) {
         PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - entrou...');
 
-        /**
-         * excluir uma única entrada
-         */
+        // excluir uma única entrada
         $sqlDelete = <<< EOT
                 DELETE FROM {$this->rrAssignmentTable} WHERE itilcategories_id = {$itilCategory}
 EOT;
@@ -247,6 +245,7 @@ EOT;
         $this->DB->queryOrDie($sqlDelete, $this->DB->error());
     }
 
+    // Acionado com quanto Tipo for Categoria
     public function updateLastAssignmentIndexCategoria($itilcategoriesId, $index) {
         $sqlUpdate = <<< EOT
                 UPDATE {$this->rrAssignmentTable}
@@ -257,6 +256,7 @@ EOT;
         $this->DB->queryOrDie($sqlUpdate, $this->DB->error());
     }
 
+    // Acionado com quanto Tipo for Grupo
     public function updateLastAssignmentIndexGrupo($itilcategoriesId, $index) {
         // Obtém o grupo responsável pela categoria fornecida
         $groupId = $this->getGroupByItilCategory($itilcategoriesId);
