@@ -18,8 +18,9 @@ O **plugin Smart Assign para GLPI** permite configurar uma política de atribui�
 - Simplificação da gestão de tickets em categorias específicas.
 - Adaptabilidade às mudanças na equipe ou estrutura do grupo.
 
----
 
+---
+**Creditos**: Este plugin é um fork do RoundRobin (disponível em: https://github.com/initiativa/roundrobin), originalmente desenvolvido por [Giudy](https://github.com/Giudy).
 **Observação**: Sou iniciante no GitHub e este é meu primeiro projeto. Estou aprendendo tanto sobre o desenvolvimento de plugins quanto sobre como interagir com a plataforma GitHub. Qualquer feedback ou sugestão será muito bem-vindo! 😊
 
 **Aproveite essa solução prática e eficiente para melhorar a gestão de tickets no GLPI!**
