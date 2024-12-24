@@ -28,7 +28,7 @@
             <num>1.2.0</num>
             <compatibility>9.5</compatibility>
             <compatibility>10.0.17</compatibility>
-            <download_urlses>https://github.com/RPGMais/smartassign/releases/download/v1.2.0-beta/smartassign-v1.2.0.tar.gz</download_url>
+            <download_url>https://github.com/RPGMais/smartassign/releases/download/v1.2.0-beta/smartassign-v1.2.0.tar.gz</download_url>
         </version>
     </versions>
     <langs>
@@ -51,8 +51,8 @@
             <tag>Assistência</tag>
             <tag>Técnico</tag>
         </pt_BR>
-        <screenshots>
-            <screenshot>https://raw.githubusercontent.com/RPGMais/smartassign/refs/heads/main/pics/smartassign.png</screenshot>
-        </screenshots>
     </tags>
+    <screenshots>
+        <screenshot>https://raw.githubusercontent.com/RPGMais/smartassign/refs/heads/main/pics/smartassign.png</screenshot>
+    </screenshots>
 </root>
