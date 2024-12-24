@@ -3,7 +3,7 @@
     <name>SmartAssign</name>
     <key>smartassign</key>
     <state>stable</state>
-    <logo>https://raw.githubusercontent.com/RPGMais/smartassign/refs/heads/main/pics/roundrobin-logo.png</logo>
+    <logo>https://raw.githubusercontent.com/RPGMais/smartassign/refs/heads/main/pics/smartassign-logo.png</logo>
     <description>
         <short>
             <en>This plugin allows the assignment of a ticket using a round-robin policy.</en>
@@ -19,7 +19,7 @@
     <homepage>https://github.com/RPGMais/smartassign</homepage>
     <download>https://github.com/RPGMais/smartassign/releases</download>
     <issues>https://github.com/RPGMais/smartassign/issues</issues>
-    <readme>https://github.com/RPGMais/smartassign/blob/main/README.md</readme>
+    <readme>https://raw.githubusercontent.com/RPGMais/smartassign/master/README.md</readme>
     <authors>
         <author>Richard Loureiro</author>
     </authors>
@@ -27,8 +27,8 @@
         <version>
             <num>1.2.0</num>
             <compatibility>9.5</compatibility>
-            <compatibility>11</compatibility>
-            <download_url>https://github.com/RPGMais/smartassign/releases</download_url>
+            <compatibility>10</compatibility>
+            <download_urlses>https://github.com/RPGMais/smartassign/releases/download/v1.2.0-beta/smartassign-v1.2.0.tar.gz</download_url>
         </version>
     </versions>
     <langs>
