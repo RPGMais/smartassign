@@ -4,34 +4,34 @@ include ('../../../inc/includes.php');
 require_once 'config.class.php';
 require_once 'RRAssignmentsEntity.class.php';
 
-class TicketBalanceConfigFormClass extends CommonDBTM {
+class SmartAssignConfigFormClass extends CommonDBTM {
 
     // Propriedade para armazenar a dependência
     private $rrAssignmentsEntity;
 
     public function __construct() {
-        PluginTicketBalanceLogger::addWarning(__METHOD__ . ' - construtor chamado');
+        PluginSmartAssignLogger::addWarning(__METHOD__ . ' - construtor chamado');
         
         // Inicializar a dependência no construtor
-        $this->rrAssignmentsEntity = new PluginTicketBalanceRRAssignmentsEntity();
+        $this->rrAssignmentsEntity = new PluginSmartAssignRRAssignmentsEntity();
     }
 
     public function renderTitle() {
         $injectHTML = <<< EOT
                 <p>
                     <div align='center'>
-                        <h1>Configurações do TicketBalance</h1>
+                        <h1>Configurações do SmartAssign</h1>
                     </div>
                 </p>
 EOT;
         echo $injectHTML;
     }
 
-    public function showFormTicketBalance() {
+    public function showFormSmartAssign() {
         global $CFG_GLPI, $DB;
 
         if (self::checkCentralInterface()) {
-            PluginTicketBalanceLogger::addWarning(__METHOD__ . ' - exibir conteúdo');
+            PluginSmartAssignLogger::addWarning(__METHOD__ . ' - exibir conteúdo');
             self::displayContent();
         } else {
             echo "<div align='center'><br><img src='" . $CFG_GLPI['root_doc'] . "/pics/warning.png'><br>" . __("Acesso negado") . "</div>";
@@ -40,7 +40,7 @@ EOT;
 
     public static function checkCentralInterface() {
         $currentInterface = Session::getCurrentInterface();
-        PluginTicketBalanceLogger::addWarning(__METHOD__ . ' - interface atual: ' . $currentInterface);
+        PluginSmartAssignLogger::addWarning(__METHOD__ . ' - interface atual: ' . $currentInterface);
         return $currentInterface === 'central';
     }
 
@@ -103,17 +103,17 @@ EOT;
     }
 
     protected static function getSettings() {
-        $instance = new PluginTicketBalanceRRAssignmentsEntity();
+        $instance = new PluginSmartAssignRRAssignmentsEntity();
         return $instance->getAll();
     }
 
     protected static function getAutoAssignGroup() {
-        $instance = new PluginTicketBalanceRRAssignmentsEntity();
+        $instance = new PluginSmartAssignRRAssignmentsEntity();
         return $instance->getOptionAutoAssignGroup();
     }
 
     protected static function getAutoAssignUser() {
-        $instance = new PluginTicketBalanceRRAssignmentsEntity();
+        $instance = new PluginSmartAssignRRAssignmentsEntity();
         return $instance->getOptionAutoAssignUser();
     }
 
@@ -123,8 +123,8 @@ EOT;
 			die('Token CSRF inválido');
 		}
 		
-        PluginTicketBalanceLogger::addWarning(__METHOD__ . ' - POST: ' . print_r($_POST, true));
-        $rrAssignmentsEntity = new PluginTicketBalanceRRAssignmentsEntity();
+        PluginSmartAssignLogger::addWarning(__METHOD__ . ' - POST: ' . print_r($_POST, true));
+        $rrAssignmentsEntity = new PluginSmartAssignRRAssignmentsEntity();
 
         //Salvar opções)
         $rrAssignmentsEntity->updateAutoAssignGroup($_POST['auto_assign_group']);

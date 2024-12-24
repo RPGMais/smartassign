@@ -5,7 +5,7 @@ if (!defined('GLPI_ROOT')) {
 }
 require_once GLPI_ROOT . '/inc/includes.php';
 
-interface IPluginTicketBalanceHookItemHandler {
+interface IPluginSmartAssignHookItemHandler {
 
     public function itemAdded(CommonDBTM $item);
 

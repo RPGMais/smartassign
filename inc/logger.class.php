@@ -3,18 +3,18 @@
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 
-class PluginTicketBalanceLogger {
+class PluginSmartAssignLogger {
 
     protected static $logger = null; // Define a propriedade estática
 
     protected static function getLogger() {
         if (self::$logger === null) {
             // Cria a nova instância do logger
-            self::$logger = new Logger('ticketbalance');
+            self::$logger = new Logger('smartassign');
 
             // Caminho do diretório de logs
-            $logDir = PLUGIN_TICKETBALANCE_DIR . '/logs/';
-            $logFile = $logDir . 'ticketbalance.log';
+            $logDir = PLUGIN_SMARTASSIGN_DIR . '/logs/';
+            $logFile = $logDir . 'smartassign.log';
 
             // Verifica se a pasta de logs existe, caso contrário cria
             if (!file_exists($logDir)) {

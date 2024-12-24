@@ -7,22 +7,22 @@ require_once '../inc/config.form.class.php';
 /**
  * render menu bar
  */
-Html::header('TicketBalance', $_SERVER['PHP_SELF'], "plugins", TicketBalanceConfigClass::$PLUGIN_TICKETBALANCE_CODE, "config");
+Html::header('SmartAssign', $_SERVER['PHP_SELF'], "plugins", SmartAssignConfigClass::$PLUGIN_SMARTASSIGN_CODE, "config");
 
-$pluginTicketBalanceConfigClass = new TicketBalanceConfigFormClass();
+$pluginSmartAssignConfigClass = new SmartAssignConfigFormClass();
 
 /**
  * check for post form data and perform requested action
  */
 if (isset($_REQUEST['save'])) {
-    PluginTicketBalanceLogger::addWarning(__METHOD__ . ' - SAVE: POST: ', $_POST);
-	$pluginTicketBalanceConfigClass->saveSettings();
+    PluginSmartAssignLogger::addWarning(__METHOD__ . ' - SAVE: POST: ', $_POST);
+	$pluginSmartAssignConfigClass->saveSettings();
     Session::AddMessageAfterRedirect('Configuração salva');
     Html::back();
 }
 
 if (isset($_REQUEST['cancel'])) {
-    PluginTicketBalanceLogger::addWarning(__METHOD__ . ' - CANCEL: POST: ', $_POST);
+    PluginSmartAssignLogger::addWarning(__METHOD__ . ' - CANCEL: POST: ', $_POST);
     Session::AddMessageAfterRedirect('Configuração resetada');
     Html::back();
 }
@@ -30,5 +30,5 @@ if (isset($_REQUEST['cancel'])) {
 /**
  * then render current configuration
  */
-$pluginTicketBalanceConfigClass->renderTitle();
-$pluginTicketBalanceConfigClass->showFormTicketBalance();
+$pluginSmartAssignConfigClass->renderTitle();
+$pluginSmartAssignConfigClass->showFormSmartAssign();

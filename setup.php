@@ -1,44 +1,44 @@
 <?php
 
-if (!defined('PLUGIN_TICKETBALANCE_DIR')) {
-    define('PLUGIN_TICKETBALANCE_DIR', __DIR__);
+if (!defined('PLUGIN_SMARTASSIGN_DIR')) {
+    define('PLUGIN_SMARTASSIGN_DIR', __DIR__);
 }
 
-require_once PLUGIN_TICKETBALANCE_DIR . '/inc/logger.class.php';
-require_once PLUGIN_TICKETBALANCE_DIR . '/inc/request.class.php';
-require_once PLUGIN_TICKETBALANCE_DIR . '/inc/config.class.php';
+require_once PLUGIN_SMARTASSIGN_DIR . '/inc/logger.class.php';
+require_once PLUGIN_SMARTASSIGN_DIR . '/inc/request.class.php';
+require_once PLUGIN_SMARTASSIGN_DIR . '/inc/config.class.php';
 
 // Inicializa os hooks do plugin
-function plugin_init_ticketbalance() {
+function plugin_init_smartassign() {
     global $PLUGIN_HOOKS, $CFG_GLPI, $LANG;
 
-    $PLUGIN_HOOKS['csrf_compliant']['ticketbalance'] = true;
-    $PLUGIN_HOOKS['menu_toadd']['ticketbalance'] = ['plugins' => 'TicketBalanceConfigClass'];
+    $PLUGIN_HOOKS['csrf_compliant']['smartassign'] = true;
+    $PLUGIN_HOOKS['menu_toadd']['smartassign'] = ['plugins' => 'SmartAssignConfigClass'];
 
     // Inicializa configurações do plugin
-    TicketBalanceConfigClass::init();
-    TicketBalanceConfigClass::loadSources();
+    SmartAssignConfigClass::init();
+    SmartAssignConfigClass::loadSources();
 }
 
 // Obtém o nome e a versão do plugin @return array
-function plugin_version_ticketbalance() {
-    return TicketBalanceConfigClass::getVersion();
+function plugin_version_smartassign() {
+    return SmartAssignConfigClass::getVersion();
 }
 
 // Verifica os pré-requisitos antes da instalação @return boolean
-function plugin_ticketbalance_check_prerequisites() {
-    if (version_compare(GLPI_VERSION, TicketBalanceConfigClass::$PLUGIN_TICKETBALANCE_MIN_GLPI_VERSION, '<') ||
-        version_compare(GLPI_VERSION, TicketBalanceConfigClass::$PLUGIN_TICKETBALANCE_MAX_GLPI_VERSION, '>')) {
+function plugin_smartassign_check_prerequisites() {
+    if (version_compare(GLPI_VERSION, SmartAssignConfigClass::$PLUGIN_SMARTASSIGN_MIN_GLPI_VERSION, '<') ||
+        version_compare(GLPI_VERSION, SmartAssignConfigClass::$PLUGIN_SMARTASSIGN_MAX_GLPI_VERSION, '>')) {
         
-        PluginTicketBalanceLogger::addCritical(__FUNCTION__ . ' - pré-requisitos não atendidos: ' . TicketBalanceConfigClass::$PLUGIN_TICKETBALANCE_GLPI_VERSION_ERROR);
+        PluginSmartAssignLogger::addCritical(__FUNCTION__ . ' - pré-requisitos não atendidos: ' . SmartAssignConfigClass::$PLUGIN_SMARTASSIGN_GLPI_VERSION_ERROR);
         
         if (method_exists('Plugin', 'messageIncompatible')) {
-            Plugin::messageIncompatible('core', TicketBalanceConfigClass::$PLUGIN_TICKETBALANCE_GLPI_VERSION_ERROR);
+            Plugin::messageIncompatible('core', SmartAssignConfigClass::$PLUGIN_SMARTASSIGN_GLPI_VERSION_ERROR);
         }
         return false;
     }
 
-    PluginTicketBalanceLogger::addDebug(__FUNCTION__ . ' - pré-requisitos atendidos');
+    PluginSmartAssignLogger::addDebug(__FUNCTION__ . ' - pré-requisitos atendidos');
     return true;
 }
 
@@ -48,7 +48,7 @@ function plugin_ticketbalance_check_prerequisites() {
  * @param boolean $verbose Habilita verbosidade. Padrão é false
  * @return boolean
  */
-function plugin_ticketbalance_check_config($verbose = false) {
+function plugin_smartassign_check_config($verbose = false) {
     if (true) {
         return true; // Configuração válida
     }

@@ -1,14 +1,14 @@
 <?php
 
-class PluginTicketBalanceITILCategoryHookHandler extends CommonDBTM implements IPluginTicketBalanceHookItemHandler {
+class PluginSmartAssignITILCategoryHookHandler extends CommonDBTM implements IPluginSmartAssignHookItemHandler {
 
     public function itemAdded(CommonDBTM $item) {
-        PluginTicketBalanceLogger::addWarning(__METHOD__ . " - Item Type: " . $item->getType());
+        PluginSmartAssignLogger::addWarning(__METHOD__ . " - Item Type: " . $item->getType());
         if ($item->getType() !== 'ITILCategory') {
             return;
         }
-        PluginTicketBalanceLogger::addWarning(__METHOD__ . " - ITILCategoryId: " . $this->getItilCategoryId($item));
-        $rrAssignmentsEntity = new PluginTicketBalanceRRAssignmentsEntity();
+        PluginSmartAssignLogger::addWarning(__METHOD__ . " - ITILCategoryId: " . $this->getItilCategoryId($item));
+        $rrAssignmentsEntity = new PluginSmartAssignRRAssignmentsEntity();
         $rrAssignmentsEntity->insertItilCategory($this->getItilCategoryId($item));
     }
 
@@ -17,22 +17,22 @@ class PluginTicketBalanceITILCategoryHookHandler extends CommonDBTM implements I
     }
 
     public function itemDeleted(CommonDBTM $item) {
-        PluginTicketBalanceLogger::addWarning(__METHOD__ . " - Item Type: " . $item->getType());
+        PluginSmartAssignLogger::addWarning(__METHOD__ . " - Item Type: " . $item->getType());
         if ($item->getType() !== 'ITILCategory') {
             return;
         }
-        PluginTicketBalanceLogger::addWarning(__METHOD__ . " - ITILCategoryId: " . $this->getItilCategoryId($item));
-        $rrAssignmentsEntity = new PluginTicketBalanceRRAssignmentsEntity();
+        PluginSmartAssignLogger::addWarning(__METHOD__ . " - ITILCategoryId: " . $this->getItilCategoryId($item));
+        $rrAssignmentsEntity = new PluginSmartAssignRRAssignmentsEntity();
         $rrAssignmentsEntity->updateIsActive($this->getItilCategoryId($item), 0);
     }
 
     public function itemPurged(CommonDBTM $item) {
-        PluginTicketBalanceLogger::addWarning(__METHOD__ . " - Item Type: " . $item->getType());
+        PluginSmartAssignLogger::addWarning(__METHOD__ . " - Item Type: " . $item->getType());
         if ($item->getType() !== 'ITILCategory') {
             return;
         }
-        PluginTicketBalanceLogger::addWarning(__METHOD__ . " - ITILCategoryId: " . $this->getItilCategoryId($item));
-        $rrAssignmentsEntity = new PluginTicketBalanceRRAssignmentsEntity();
+        PluginSmartAssignLogger::addWarning(__METHOD__ . " - ITILCategoryId: " . $this->getItilCategoryId($item));
+        $rrAssignmentsEntity = new PluginSmartAssignRRAssignmentsEntity();
         $rrAssignmentsEntity->deleteItilCategory($this->getItilCategoryId($item));
     }
 

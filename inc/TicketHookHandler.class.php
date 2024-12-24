@@ -2,7 +2,7 @@
 
 require_once 'IHookItemHandler.php';
 
-class PluginTicketBalanceTicketHookHandler extends CommonDBTM implements IPluginTicketBalanceHookItemHandler {
+class PluginSmartAssignTicketHookHandler extends CommonDBTM implements IPluginSmartAssignHookItemHandler {
 
     protected $DB;
     protected $rrAssignmentsEntity;
@@ -11,16 +11,16 @@ class PluginTicketBalanceTicketHookHandler extends CommonDBTM implements IPlugin
         global $DB;
 
         $this->DB = $DB;
-        $this->rrAssignmentsEntity = new PluginTicketBalanceRRAssignmentsEntity();
+        $this->rrAssignmentsEntity = new PluginSmartAssignRRAssignmentsEntity();
     }
 
     public function itemAdded(CommonDBTM $item) {
-        PluginTicketBalanceLogger::addWarning(__METHOD__ . " - Item Type: " . $item->getType());
+        PluginSmartAssignLogger::addWarning(__METHOD__ . " - Item Type: " . $item->getType());
         if ($item->getType() !== 'Ticket') {
             return;
         }
-        PluginTicketBalanceLogger::addWarning(__METHOD__ . " - TicketId: " . $this->getTicketId($item));
-        PluginTicketBalanceLogger::addWarning(__METHOD__ . " - CategoryId: " . $this->getTicketCategory($item));
+        PluginSmartAssignLogger::addWarning(__METHOD__ . " - TicketId: " . $this->getTicketId($item));
+        PluginSmartAssignLogger::addWarning(__METHOD__ . " - CategoryId: " . $this->getTicketCategory($item));
         $this->assignTicket($item);
     }
 
@@ -57,14 +57,14 @@ class PluginTicketBalanceTicketHookHandler extends CommonDBTM implements IPlugin
 EOT;
         $resultCollection = $this->DB->queryOrDie($sql, $this->DB->error());
         $resultArray = iterator_to_array($resultCollection);
-        PluginTicketBalanceLogger::addWarning(__METHOD__ . ' - result array: ', $resultArray);
+        PluginSmartAssignLogger::addWarning(__METHOD__ . ' - result array: ', $resultArray);
         return $resultArray;
     }
 
     protected function assignTicket(CommonDBTM $item) {
         $itilcategoriesId = $this->getTicketCategory($item);
         if (($lastAssignmentIndex = $this->getLastAssignmentIndex($item)) === false) {
-            PluginTicketBalanceLogger::addWarning(__FUNCTION__ . ' - nothing to to (category is disabled or not configured; getLastAssignmentIndex: ' . $lastAssignmentIndex);
+            PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - nothing to to (category is disabled or not configured; getLastAssignmentIndex: ' . $lastAssignmentIndex);
             return;
         }
         $categoryGroupMembers = $this->getGroupsUsersByCategory($this->getTicketCategory($item));
@@ -112,7 +112,7 @@ EOT;
             DELETE FROM glpi_tickets_users 
             WHERE tickets_id = {$ticketId} AND type = 2;
 EOT;
-        PluginTicketBalanceLogger::addWarning(__FUNCTION__ . ' - sqlDelete_glpi_tickets_users: ' . $sqlDelete_glpi_tickets_users);
+        PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - sqlDelete_glpi_tickets_users: ' . $sqlDelete_glpi_tickets_users);
         $this->DB->queryOrDie($sqlDelete_glpi_tickets_users, $this->DB->error());
 
         /**
@@ -123,7 +123,7 @@ EOT;
             WHERE tickets_id = {$ticketId};
 EOT;
 
-        PluginTicketBalanceLogger::addWarning(__FUNCTION__ . ' - sqlDelete_glpi_groups_tickets: ' . $sqlDelete_glpi_groups_tickets);
+        PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - sqlDelete_glpi_groups_tickets: ' . $sqlDelete_glpi_groups_tickets);
         $this->DB->queryOrDie($sqlDelete_glpi_groups_tickets, $this->DB->error());
 
         /**
@@ -132,7 +132,7 @@ EOT;
         $sqlInsert_glpi_tickets_users = <<< EOT
                     INSERT INTO glpi_tickets_users (tickets_id, users_id, type, use_notification, alternative_email) VALUES ({$ticketId}, {$userId}, 2, 1, '')
 EOT;
-        PluginTicketBalanceLogger::addWarning(__FUNCTION__ . ' - sqlInsert_glpi_tickets_users: ' . $sqlInsert_glpi_tickets_users);
+        PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - sqlInsert_glpi_tickets_users: ' . $sqlInsert_glpi_tickets_users);
         $this->DB->queryOrDie($sqlInsert_glpi_tickets_users, $this->DB->error());
 
         // if auto group assign is enabled assign the group too
@@ -142,17 +142,17 @@ EOT;
             $sqlInsert_glpi_tickets_groups = <<< EOT
                     INSERT INTO glpi_groups_tickets (tickets_id, groups_id, type) VALUES ({$ticketId}, {$groups_id}, 2)
 EOT;
-            PluginTicketBalanceLogger::addWarning(__FUNCTION__ . ' - sqlInsert_glpi_tickets_groups: ' . $sqlInsert_glpi_tickets_groups);
+            PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - sqlInsert_glpi_tickets_groups: ' . $sqlInsert_glpi_tickets_groups);
             $this->DB->queryOrDie($sqlInsert_glpi_tickets_groups, $this->DB->error());
         }
     }
 
     public function itemPurged(CommonDBTM $item) {
-        PluginTicketBalanceLogger::addWarning(__FUNCTION__ . ' - nothing to do');
+        PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - nothing to do');
     }
 
     public function itemDeleted(CommonDBTM $item) {
-        PluginTicketBalanceLogger::addWarning(__FUNCTION__ . ' - nothing to do');
+        PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - nothing to do');
     }
 
 }

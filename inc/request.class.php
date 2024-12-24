@@ -1,6 +1,6 @@
 <?php
 
-class PluginTicketBalanceRequest {
+class PluginSmartAssignRequest {
 
     protected static function getInputParam($type, $key) {
         $value = filter_input($type, $key);
@@ -26,7 +26,7 @@ class PluginTicketBalanceRequest {
     public static function getCurrentProfileSettings() {
         global $DB;
 
-        $pluginCode = TicketBalanceConfigClass::$PLUGIN_TICKETBALANCE_CODE;
+        $pluginCode = SmartAssignConfigClass::$PLUGIN_SMARTASSIGN_CODE;
         $settingTableConfig = "glpi_plugin_" . $pluginCode . "_config";
         $profileId = self::getUserProfileId();
         $sql = <<< EOT
@@ -38,7 +38,7 @@ EOT;
         $configArray = iterator_to_array($collection);
 
         $settingsArray = iterator_to_array($collection);
-        PluginTicketBalanceLogger::addWarning(__METHOD__ . " - profile_id: $profileId results: " . var_export($settingsArray, true));
+        PluginSmartAssignLogger::addWarning(__METHOD__ . " - profile_id: $profileId results: " . var_export($settingsArray, true));
         return count($settingsArray) === 1 ? $settingsArray[0]['hasTypeAsCategory'] : null;
     }
 
@@ -61,7 +61,7 @@ EOT;
         Session::checkLoginUser();
 
         $plugin = new Plugin();
-        if (!$plugin->isActivated(TicketBalanceConfigClass::$PLUGIN_TICKETBALANCE_CODE)) {
+        if (!$plugin->isActivated(SmartAssignConfigClass::$PLUGIN_SMARTASSIGN_CODE)) {
             exit;
         }
     }

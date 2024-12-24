@@ -5,12 +5,12 @@ if (!defined('GLPI_ROOT')) {
 }
 require_once GLPI_ROOT . '/inc/includes.php';
 
-if (!defined('PLUGIN_TICKETBALANCE_DIR')) {
-    define('PLUGIN_TICKETBALANCE_DIR', __DIR__);
+if (!defined('PLUGIN_SMARTASSIGN_DIR')) {
+    define('PLUGIN_SMARTASSIGN_DIR', __DIR__);
 }
-require_once PLUGIN_TICKETBALANCE_DIR . '/inc/config.class.php';
+require_once PLUGIN_SMARTASSIGN_DIR . '/inc/config.class.php';
 
-class PluginTicketBalanceRRAssignmentsEntity extends CommonDBTM {
+class PluginSmartAssignRRAssignmentsEntity extends CommonDBTM {
 
     protected $DB;
     protected $rrAssignmentTable;
@@ -20,8 +20,8 @@ class PluginTicketBalanceRRAssignmentsEntity extends CommonDBTM {
         global $DB;
 
         $this->DB = $DB;
-        $this->rrAssignmentTable = TicketBalanceConfigClass::getRrAssignmentTable();
-        $this->rrOptionsTable = TicketBalanceConfigClass::getRrOptionsTable();
+        $this->rrAssignmentTable = SmartAssignConfigClass::getRrAssignmentTable();
+        $this->rrOptionsTable = SmartAssignConfigClass::getRrOptionsTable();
     }
 
     public function init() {
@@ -32,7 +32,7 @@ class PluginTicketBalanceRRAssignmentsEntity extends CommonDBTM {
     }
 
     public function cleanUp() {
-        PluginTicketBalanceLogger::addWarning(__FUNCTION__ . ' - entrou...');
+        PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - entrou...');
 
         /**
          * remover configurações
@@ -41,10 +41,10 @@ class PluginTicketBalanceRRAssignmentsEntity extends CommonDBTM {
             $sqlDropAssign = <<< EOT
             DROP TABLE {$this->rrAssignmentTable}
 EOT;
-            PluginTicketBalanceLogger::addWarning(__FUNCTION__ . ' - sqlDrop: ' . $sqlDropAssign);
+            PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - sqlDrop: ' . $sqlDropAssign);
             $this->DB->queryOrDie($sqlDropAssign, $this->DB->error());
         } else {
-            PluginTicketBalanceLogger::addWarning(__FUNCTION__ . " - tabela não removida porque não existe: " . $this->rrAssignmentTable);
+            PluginSmartAssignLogger::addWarning(__FUNCTION__ . " - tabela não removida porque não existe: " . $this->rrAssignmentTable);
         }
 
         /**
@@ -54,15 +54,15 @@ EOT;
             $sqlDropOptions = <<< EOT
             DROP TABLE {$this->rrOptionsTable}
 EOT;
-            PluginTicketBalanceLogger::addWarning(__FUNCTION__ . ' - sqlDrop: ' . $sqlDropOptions);
+            PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - sqlDrop: ' . $sqlDropOptions);
             $this->DB->queryOrDie($sqlDropOptions, $this->DB->error());
         } else {
-            PluginTicketBalanceLogger::addWarning(__FUNCTION__ . " - tabela não removida porque não existe: " . $this->rrOptionsTable);
+            PluginSmartAssignLogger::addWarning(__FUNCTION__ . " - tabela não removida porque não existe: " . $this->rrOptionsTable);
         }
     }
 
     protected function createTable() {
-        PluginTicketBalanceLogger::addWarning(__FUNCTION__ . ' - entrou...');
+        PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - entrou...');
 
         /**
          * criar tabela de configurações
@@ -78,7 +78,7 @@ EOT;
 						UNIQUE INDEX ix_itilcategories_uq (itilcategories_id ASC)
 					) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
 EOT;
-            PluginTicketBalanceLogger::addWarning(__FUNCTION__ . ' - sqlCreate: ' . $sqlCreateAssign);
+            PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - sqlCreate: ' . $sqlCreateAssign);
             $this->DB->queryOrDie($sqlCreateAssign, $this->DB->error());
         }
 
@@ -94,13 +94,13 @@ EOT;
 						PRIMARY KEY (id)
 					) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
 EOT;
-            PluginTicketBalanceLogger::addWarning(__FUNCTION__ . ' - sqlCreate: ' . $sqlCreateOption);
+            PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - sqlCreate: ' . $sqlCreateOption);
             $this->DB->queryOrDie($sqlCreateOption, $this->DB->error());
         }
     }
 
     protected function truncateTable() {
-        PluginTicketBalanceLogger::addWarning(__FUNCTION__ . ' - entrou...');
+        PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - entrou...');
 
         /**
          * limpar todas as configurações
@@ -109,7 +109,7 @@ EOT;
             $sqlTruncAssign = <<< EOT
                 TRUNCATE TABLE {$this->rrAssignmentTable}
 EOT;
-            PluginTicketBalanceLogger::addWarning(__FUNCTION__ . ' - sqlTrunc: ' . $sqlTruncAssign);
+            PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - sqlTrunc: ' . $sqlTruncAssign);
             $this->DB->queryOrDie($sqlTruncAssign, $this->DB->error());
         }
 
@@ -120,7 +120,7 @@ EOT;
             $sqlTruncOptions = <<< EOT
                 TRUNCATE TABLE {$this->rrOptionsTable}
 EOT;
-            PluginTicketBalanceLogger::addWarning(__FUNCTION__ . ' - sqlTrunc: ' . $sqlTruncOptions);
+            PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - sqlTrunc: ' . $sqlTruncOptions);
             $this->DB->queryOrDie($sqlTruncOptions, $this->DB->error());
         }
     }
@@ -133,7 +133,7 @@ EOT;
         $sqlCategory = <<< EOT
                 SELECT id FROM glpi_itilcategories
 EOT;
-        PluginTicketBalanceLogger::addWarning(__FUNCTION__ . ' - sqlCategory: ' . $sqlCategory);
+        PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - sqlCategory: ' . $sqlCategory);
         $itilCategoriesCollection = $this->DB->queryOrDie($sqlCategory, $this->DB->error());
         $itilCategoriesArray = iterator_to_array($itilCategoriesCollection);
         foreach ($itilCategoriesArray as $itilCategory) {
@@ -142,7 +142,7 @@ EOT;
     }
 
     public function insertItilCategory($itilCategory) {
-        PluginTicketBalanceLogger::addWarning(__FUNCTION__ . ' - entrou...');
+        PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - entrou...');
 
         /**
          * inserir uma única entrada
@@ -150,19 +150,19 @@ EOT;
         $sqlInsert = <<< EOT
                 INSERT INTO {$this->rrAssignmentTable} (itilcategories_id) VALUES ({$itilCategory})
 EOT;
-        PluginTicketBalanceLogger::addWarning(__FUNCTION__ . ' - sqlInsert: ' . $sqlInsert);
+        PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - sqlInsert: ' . $sqlInsert);
         $this->DB->queryOrDie($sqlInsert, $this->DB->error());
     }
 
     public function insertOptions() {
-        PluginTicketBalanceLogger::addWarning(__FUNCTION__ . ' - entrou...');
+        PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - entrou...');
 
         // inserir entrada
 		$sqlInsert = <<< EOT
 				INSERT INTO {$this->rrOptionsTable} (auto_assign_group, auto_assign_user)
 				VALUES (1, 1)
 EOT;
-        PluginTicketBalanceLogger::addWarning(__FUNCTION__ . ' - sqlInsert: ' . $sqlInsert);
+        PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - sqlInsert: ' . $sqlInsert);
         $this->DB->queryOrDie($sqlInsert, $this->DB->error());
     }
 
@@ -170,7 +170,7 @@ EOT;
         $sql = <<< EOT
                 SELECT auto_assign_group FROM {$this->rrOptionsTable} LIMIT 1
 EOT;
-        PluginTicketBalanceLogger::addWarning(__FUNCTION__ . ' - sql: ' . $sql);
+        PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - sql: ' . $sql);
         $resultCollection = $this->DB->queryOrDie($sql, $this->DB->error());
         $resultArray = iterator_to_array($resultCollection);
         return $resultArray[0]['auto_assign_group'];
@@ -180,7 +180,7 @@ EOT;
         $sql = <<< EOT
                 SELECT auto_assign_user FROM {$this->rrOptionsTable} LIMIT 1
 EOT;
-        PluginTicketBalanceLogger::addWarning(__FUNCTION__ . ' - sql: ' . $sql);
+        PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - sql: ' . $sql);
         $resultCollection = $this->DB->queryOrDie($sql, $this->DB->error());
         $resultArray = iterator_to_array($resultCollection);
         return $resultArray[0]['auto_assign_user'];
@@ -191,7 +191,7 @@ EOT;
                 SELECT groups_id FROM glpi_itilcategories
                 WHERE id = {$itilCategory}
 EOT;
-        PluginTicketBalanceLogger::addWarning(__FUNCTION__ . ' - sql: ' . $sql);
+        PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - sql: ' . $sql);
         $resultCollection = $this->DB->queryOrDie($sql, $this->DB->error());
         $resultArray = iterator_to_array($resultCollection);
         $groupsId = $resultArray[0]['groups_id'];
@@ -210,7 +210,7 @@ EOT;
 			WHERE id = 1
 EOT;
 
-		PluginTicketBalanceLogger::addWarning(__FUNCTION__ . ' - sqlUpdate: ' . $sqlUpdate);
+		PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - sqlUpdate: ' . $sqlUpdate);
 
 		// Executa a query
 		$DB->queryOrDie($sqlUpdate, $DB->error());
@@ -228,14 +228,14 @@ EOT;
 			WHERE id = 1
 EOT;
 
-		PluginTicketBalanceLogger::addWarning(__FUNCTION__ . ' - sqlUpdate: ' . $sqlUpdate);
+		PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - sqlUpdate: ' . $sqlUpdate);
 
 		// Executa a query
 		$DB->queryOrDie($sqlUpdate, $DB->error());
 	}
 
     public function deleteItilCategory($itilCategory) {
-        PluginTicketBalanceLogger::addWarning(__FUNCTION__ . ' - entrou...');
+        PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - entrou...');
 
         /**
          * excluir uma única entrada
@@ -243,7 +243,7 @@ EOT;
         $sqlDelete = <<< EOT
                 DELETE FROM {$this->rrAssignmentTable} WHERE itilcategories_id = {$itilCategory}
 EOT;
-        PluginTicketBalanceLogger::addWarning(__FUNCTION__ . ' - sqlDelete: ' . $sqlDelete);
+        PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - sqlDelete: ' . $sqlDelete);
         $this->DB->queryOrDie($sqlDelete, $this->DB->error());
     }
 
@@ -253,7 +253,7 @@ EOT;
                 SET last_assignment_index = {$index}
                 WHERE itilcategories_id = {$itilcategoriesId}
 EOT;
-        PluginTicketBalanceLogger::addWarning(__FUNCTION__ . ' - sqlUpdate: ' . $sqlUpdate);
+        PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - sqlUpdate: ' . $sqlUpdate);
         $this->DB->queryOrDie($sqlUpdate, $this->DB->error());
     }
 
@@ -262,7 +262,7 @@ EOT;
                 UPDATE {$this->rrAssignmentTable}
                 SET last_assignment_index = {$index}
 EOT;
-        PluginTicketBalanceLogger::addWarning(__FUNCTION__ . ' - sqlUpdate: ' . $sqlUpdate);
+        PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - sqlUpdate: ' . $sqlUpdate);
         $this->DB->queryOrDie($sqlUpdate, $this->DB->error());
     }
 
@@ -272,7 +272,7 @@ EOT;
                 SET is_active = {$isActive}
                 WHERE itilcategories_id = {$itilcategoriesId}
 EOT;
-        PluginTicketBalanceLogger::addWarning(__FUNCTION__ . ' - sqlUpdate: ' . $sqlUpdate);
+        PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - sqlUpdate: ' . $sqlUpdate);
         $this->DB->queryOrDie($sqlUpdate, $this->DB->error());
     }
 
@@ -281,10 +281,10 @@ EOT;
                 SELECT last_assignment_index FROM {$this->rrAssignmentTable} 
                 WHERE itilcategories_id = {$itilcategoriesId} AND is_active = 1
 EOT;
-        PluginTicketBalanceLogger::addWarning(__FUNCTION__ . ' - sql: ' . $sql);
+        PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - sql: ' . $sql);
         $resultCollection = $this->DB->queryOrDie($sql, $this->DB->error());
         $resultArray = iterator_to_array($resultCollection);
-        PluginTicketBalanceLogger::addWarning(__FUNCTION__ . ' - $resultArray: ' . print_r($resultArray, true));
+        PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - $resultArray: ' . print_r($resultArray, true));
         if (count($resultArray) === 0 || count($resultArray) > 1) {
             /**
              * para o comportamento especificado da categoria não é necessário
@@ -292,7 +292,7 @@ EOT;
              */
             return false;
         } else {
-            PluginTicketBalanceLogger::addWarning(__FUNCTION__ . ' - categoria tem entrada');
+            PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - categoria tem entrada');
             return $resultArray[0]['last_assignment_index'];
         }
     }
@@ -314,7 +314,7 @@ EOT;
                             gu.groups_id = g.id) AS num_group_members,
                     a.is_active
                 FROM
-                    glpi_plugin_ticketbalance_assignments a
+                    glpi_plugin_smartassign_assignments a
                         JOIN
                     glpi_itilcategories c ON c.id = a.itilcategories_id
                         JOIN
@@ -335,16 +335,16 @@ EOT;
                             gu.groups_id = g.id) AS num_group_members,
                     a.is_active
                 FROM
-                    glpi_plugin_ticketbalance_assignments a
+                    glpi_plugin_smartassign_assignments a
                         JOIN
                     glpi_itilcategories c ON c.id = a.itilcategories_id
                         LEFT JOIN
                     glpi_groups g ON g.id = c.groups_id
 EOT;
-        PluginTicketBalanceLogger::addWarning(__FUNCTION__ . ' - sql: ' . $sql);
+        PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - sql: ' . $sql);
         $resultCollection = $this->DB->queryOrDie($sql, $this->DB->error());
         $resultArray = iterator_to_array($resultCollection);
-        PluginTicketBalanceLogger::addWarning(__FUNCTION__ . ' - $resultArray: ' . print_r($resultArray, true));
+        PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - $resultArray: ' . print_r($resultArray, true));
         return $resultArray;
     }
 
