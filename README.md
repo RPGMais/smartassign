@@ -18,6 +18,12 @@ O **plugin Smart Assign para GLPI** permite configurar uma política de atribui�
 - Simplificação da gestão de tickets em categorias específicas.
 - Adaptabilidade às mudanças na equipe ou estrutura do grupo.
 
+#### **Criação de Logs**
+- Logs agora são gerados automaticamente na pasta do plugin.
+- **Observação**: Após clonar o repositório, é necessário configurar permissões de escrita na pasta. Exemplo:
+  ```bash
+  chown -R apache:apache /usr/share/glpi/plugins/smartassign
+  ```
 
 ---
 **Creditos**: Este plugin é um fork do RoundRobin (disponível em: https://github.com/initiativa/roundrobin), originalmente desenvolvido por [Giudy](https://github.com/Giudy).
