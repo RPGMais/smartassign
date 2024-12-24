@@ -21,13 +21,6 @@ O **plugin Smart Assign para GLPI** foi projetado para otimizar a atribuição d
 
 ---
 
-#### **Alterações Recentes**
-- **Renomeação do Plugin**: O plugin foi renomeado de **TicketBalance** para **SmartAssign** para refletir melhor suas funcionalidades de atribuição inteligente.
-- **Novas Configurações de Atribuição**: Escolha entre atribuir por categoria ou por grupo, com uma explicação detalhada no painel de configurações.
-- **Logs Diários**: Agora os logs são gerados por dia e excluídos automaticamente após 7 dias.
-
----
-
 #### **Benefícios**
 - Equilíbrio na distribuição de tarefas entre os técnicos.
 - Flexibilidade para atender diferentes cenários de gerenciamento de tickets.
@@ -47,6 +40,7 @@ O **plugin Smart Assign para GLPI** foi projetado para otimizar a atribuição d
 
 2. **Configuração no GLPI**:
    - Acesse a página de configurações do plugin e escolha entre "Categoria" ou "Grupo" como base para a atribuição.
+   - Acesse a página de configurações do plugin e escolha entre atribuir grupo encarregado "Sim" ou "Não".
 
 ---
 
