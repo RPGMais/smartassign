@@ -45,7 +45,7 @@ O **plugin Smart Assign para GLPI** foi projetado para otimizar a atribuição d
 ---
 
 #### **Creditos**
-Este plugin é um fork do RoundRobin (disponível em: [RoundRobin no GitHub](https://github.com/initiativa/roundrobin)), originalmente desenvolvido por [Giudy](https://github.com/Giudy).
+Este plugin é um fork do RoundRobin (disponível em: [RoundRobin no GitHub](https://github.com/initiativa/roundrobin)), originalmente desenvolvido por [initiativa](https://github.com/initiativa).
 
 ---
 
