@@ -35,7 +35,7 @@ class PluginSmartAssignRRAssignmentsEntity extends CommonDBTM {
         PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - entrou...');
 
         /**
-         * remover configurações
+         * Remover configurações
          */
         if ($this->DB->tableExists($this->rrAssignmentTable)) {
             $sqlDropAssign = <<< EOT
@@ -48,7 +48,7 @@ EOT;
         }
 
         /**
-         * remover opções
+         * Remover opções
          */
         if ($this->DB->tableExists($this->rrOptionsTable)) {
             $sqlDropOptions = <<< EOT
@@ -64,35 +64,34 @@ EOT;
     protected function createTable() {
         PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - entrou...');
 
-        /**
-         * criar tabela de configurações
-         */
+        // Criar tabela de configurações
         if (!$this->DB->tableExists($this->rrAssignmentTable)) {
             $sqlCreateAssign = <<< EOT
-					CREATE TABLE IF NOT EXISTS {$this->rrAssignmentTable} (
-						id INT(11) NOT NULL auto_increment,
-						itilcategories_id INT(11),
-						is_active INT(1) DEFAULT 0,
-						last_assignment_index INT(11) DEFAULT NULL,
-						PRIMARY KEY (id),
-						UNIQUE INDEX ix_itilcategories_uq (itilcategories_id ASC)
-					) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+                CREATE TABLE IF NOT EXISTS {$this->rrAssignmentTable} (
+                    id INT(11) NOT NULL AUTO_INCREMENT,
+                    itilcategories_id INT(11),
+                    is_active INT(1) DEFAULT 0,
+                    last_assignment_index INT(11) DEFAULT NULL,
+                    PRIMARY KEY (id),
+                    UNIQUE INDEX ix_itilcategories_uq (itilcategories_id ASC)
+                ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
 EOT;
             PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - sqlCreate: ' . $sqlCreateAssign);
             $this->DB->queryOrDie($sqlCreateAssign, $this->DB->error());
         }
 
         /**
-         * criar tabela de opções
+         * Criar tabela de opções
          */
         if (!$this->DB->tableExists($this->rrOptionsTable)) {
             $sqlCreateOption = <<< EOT
-					CREATE TABLE IF NOT EXISTS {$this->rrOptionsTable} (
-						id INT(11) UNSIGNED NOT NULL auto_increment,
-						auto_assign_group INT(1) DEFAULT 1,
-						auto_assign_tipe INT(1) DEFAULT 1,
-						PRIMARY KEY (id)
-					) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+                CREATE TABLE IF NOT EXISTS {$this->rrOptionsTable} (
+                    id INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+                    auto_assign_group INT(1) DEFAULT 1,
+                    auto_assign_type INT(1) DEFAULT 1,
+                    auto_assign_mode INT(1) DEFAULT 1,
+                    PRIMARY KEY (id)
+                ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
 EOT;
             PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - sqlCreate: ' . $sqlCreateOption);
             $this->DB->queryOrDie($sqlCreateOption, $this->DB->error());
@@ -103,7 +102,7 @@ EOT;
         PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - entrou...');
 
         /**
-         * limpar todas as configurações
+         * Limpar todas as configurações
          */
         if ($this->DB->tableExists($this->rrAssignmentTable)) {
             $sqlTruncAssign = <<< EOT
@@ -114,7 +113,7 @@ EOT;
         }
 
         /**
-         * limpar todas as opções
+         * Limpar todas as opções
          */
         if ($this->DB->tableExists($this->rrOptionsTable)) {
             $sqlTruncOptions = <<< EOT
@@ -142,10 +141,10 @@ EOT;
     }
 
     public function insertItilCategory($itilCategory) {
-        PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - entrou...');
+        PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - entered...');
 
         /**
-         * inserir uma única entrada
+         * insert a single entry
          */
         $sqlInsert = <<< EOT
                 INSERT INTO {$this->rrAssignmentTable} (itilcategories_id) VALUES ({$itilCategory})
@@ -157,40 +156,50 @@ EOT;
     public function insertOptions() {
         PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - entrou...');
 
-        // inserir entrada
-		$sqlInsert = <<< EOT
-				INSERT INTO {$this->rrOptionsTable} (auto_assign_group, auto_assign_tipe)
-				VALUES (1, 1)
-EOT;
+        // Inserir entrada
+        $sqlInsert = <<< EOT
+            INSERT INTO {$this->rrOptionsTable} (auto_assign_group, auto_assign_type, auto_assign_mode)
+            VALUES (1, 1, 1)
+        EOT;
         PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - sqlInsert: ' . $sqlInsert);
         $this->DB->queryOrDie($sqlInsert, $this->DB->error());
     }
 
     public function getOptionAutoAssignGroup() {
         $sql = <<< EOT
-                SELECT auto_assign_group FROM {$this->rrOptionsTable} LIMIT 1
-EOT;
+            SELECT auto_assign_group FROM {$this->rrOptionsTable} LIMIT 1
+        EOT;
         PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - sql: ' . $sql);
         $resultCollection = $this->DB->queryOrDie($sql, $this->DB->error());
         $resultArray = iterator_to_array($resultCollection);
         return $resultArray[0]['auto_assign_group'];
     }
 
-    public function getOptionAutoAssignTipe() {
+    public function getOptionAutoAssignType() {
         $sql = <<< EOT
-                SELECT auto_assign_tipe FROM {$this->rrOptionsTable} LIMIT 1
-EOT;
+            SELECT auto_assign_type FROM {$this->rrOptionsTable} LIMIT 1
+        EOT;
         PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - sql: ' . $sql);
         $resultCollection = $this->DB->queryOrDie($sql, $this->DB->error());
         $resultArray = iterator_to_array($resultCollection);
-        return $resultArray[0]['auto_assign_tipe'];
+        return $resultArray[0]['auto_assign_type'];
+    }
+
+    public function getOptionAutoAssignMode() {
+        $sql = <<< EOT
+            SELECT auto_assign_mode FROM {$this->rrOptionsTable} LIMIT 1
+        EOT;
+        PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - sql: ' . $sql);
+        $resultCollection = $this->DB->queryOrDie($sql, $this->DB->error());
+        $resultArray = iterator_to_array($resultCollection);
+        return $resultArray[0]['auto_assign_mode'];
     }
 
     public function getGroupByItilCategory($itilCategory) {
         $sql = <<< EOT
-                SELECT groups_id FROM glpi_itilcategories
-                WHERE id = {$itilCategory}
-EOT;
+            SELECT groups_id FROM glpi_itilcategories
+            WHERE id = {$itilCategory}
+        EOT;
         PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - sql: ' . $sql);
         $resultCollection = $this->DB->queryOrDie($sql, $this->DB->error());
         $resultArray = iterator_to_array($resultCollection);
@@ -198,76 +207,100 @@ EOT;
         return $groupsId !== 0 ? $groupsId : false;
     }
 
-	public function updateAutoAssignGroup($autoAssignGroup) {
-		global $DB; // Certifique-se de usar a instância global do banco de dados
+    public function updateAutoAssignGroup($autoAssignGroup) {
+        global $DB; // Certifique-se de usar a instância global do banco de dados
 
-		// Escape do valor para evitar SQL Injection
-		$escapedValue = $DB->escape($autoAssignGroup);
+        // Escape do valor para evitar SQL Injection
+        $escapedValue = intval($autoAssignGroup);
 
-		$sqlUpdate = <<< EOT
-			UPDATE {$this->rrOptionsTable}
-			SET auto_assign_group = {$escapedValue}
-			WHERE id = 1
-EOT;
+        $sqlUpdate = <<< EOT
+            UPDATE {$this->rrOptionsTable}
+            SET auto_assign_group = {$escapedValue}
+            WHERE id = 1
+        EOT;
 
-		PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - sqlUpdate: ' . $sqlUpdate);
+        PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - sqlUpdate: ' . $sqlUpdate);
 
-		// Executa a query
-		$DB->queryOrDie($sqlUpdate, $DB->error());
-	}
+        // Executa a query
+        $DB->queryOrDie($sqlUpdate, $DB->error());
+    }
 
-	public function updateAutoAssignTipe($autoAssignTipe) {
-		global $DB; // Certifique-se de usar a instância global do banco de dados
+    public function updateAutoAssignType($autoAssignType) {
+        global $DB; // Certifique-se de usar a instância global do banco de dados
 
-		// Escape do valor para evitar SQL Injection
-		$escapedValue = $DB->escape($autoAssignTipe);
+        // Escape do valor para evitar SQL Injection
+        $escapedValue = intval($autoAssignType);
 
-		$sqlUpdate = <<< EOT
-			UPDATE {$this->rrOptionsTable}
-			SET auto_assign_tipe = {$escapedValue}
-			WHERE id = 1
-EOT;
+        $sqlUpdate = <<< EOT
+            UPDATE {$this->rrOptionsTable}
+            SET auto_assign_type = {$escapedValue}
+            WHERE id = 1
+        EOT;
 
-		PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - sqlUpdate: ' . $sqlUpdate);
+        PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - sqlUpdate: ' . $sqlUpdate);
 
-		// Executa a query
-		$DB->queryOrDie($sqlUpdate, $DB->error());
-	}
+        // Executa a query
+        $DB->queryOrDie($sqlUpdate, $DB->error());
+    }
+
+    public function updateAutoAssignMode($autoAssignMode) {
+        global $DB; // Certifique-se de usar a instância global do banco de dados
+
+        // Escape do valor para evitar SQL Injection
+        $escapedValue = intval($autoAssignMode);
+
+        $sqlUpdate = <<< EOT
+            UPDATE {$this->rrOptionsTable}
+            SET auto_assign_mode = {$escapedValue}
+            WHERE id = 1
+        EOT;
+
+        PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - sqlUpdate: ' . $sqlUpdate);
+
+        // Executa a query
+        $DB->queryOrDie($sqlUpdate, $DB->error());
+    }
 
     public function deleteItilCategory($itilCategory) {
         PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - entrou...');
 
-        // excluir uma única entrada
+        // Excluir uma única entrada
+        $itilCategory = intval($itilCategory);
         $sqlDelete = <<< EOT
-                DELETE FROM {$this->rrAssignmentTable} WHERE itilcategories_id = {$itilCategory}
-EOT;
+            DELETE FROM {$this->rrAssignmentTable} WHERE itilcategories_id = {$itilCategory}
+        EOT;
         PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - sqlDelete: ' . $sqlDelete);
         $this->DB->queryOrDie($sqlDelete, $this->DB->error());
     }
 
-    // Acionado com quanto Tipo for Categoria
+    // Acionado quando o Tipo for Categoria
     public function updateLastAssignmentIndexCategoria($itilcategoriesId, $index) {
+        $itilcategoriesId = intval($itilcategoriesId);
+        $index = intval($index);
+
         $sqlUpdate = <<< EOT
-                UPDATE {$this->rrAssignmentTable}
-                SET last_assignment_index = {$index}
-                WHERE itilcategories_id = {$itilcategoriesId}
-EOT;
+            UPDATE {$this->rrAssignmentTable}
+            SET last_assignment_index = {$index}
+            WHERE itilcategories_id = {$itilcategoriesId}
+        EOT;
         PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - sqlUpdate: ' . $sqlUpdate);
         $this->DB->queryOrDie($sqlUpdate, $this->DB->error());
     }
 
-    // Acionado com quanto Tipo for Grupo
+    // Acionado quando o Tipo for Grupo
     public function updateLastAssignmentIndexGrupo($itilcategoriesId, $index) {
         // Obtém o grupo responsável pela categoria fornecida
         $groupId = $this->getGroupByItilCategory($itilcategoriesId);
-    
+
         if ($groupId !== false) {
+            $itilcategoriesId = intval($itilcategoriesId);
+            $index = intval($index);
             $sqlUpdate = <<<EOT
                 UPDATE {$this->rrAssignmentTable} AS ra
                 JOIN glpi_itilcategories AS ic ON ra.itilcategories_id = ic.id
                 SET ra.last_assignment_index = {$index}
                 WHERE ra.is_active = 1 AND ic.groups_id = {$groupId}
-    EOT;
+            EOT;
             PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - sqlUpdate: ' . $sqlUpdate);
             $this->DB->queryOrDie($sqlUpdate, $this->DB->error());
         } else {
@@ -276,27 +309,31 @@ EOT;
     }    
 
     public function updateIsActive($itilcategoriesId, $isActive) {
+        $itilcategoriesId = intval($itilcategoriesId);
+        $isActive = intval($isActive);
+
         $sqlUpdate = <<< EOT
-                UPDATE {$this->rrAssignmentTable}
-                SET is_active = {$isActive}
-                WHERE itilcategories_id = {$itilcategoriesId}
-EOT;
+            UPDATE {$this->rrAssignmentTable}
+            SET is_active = {$isActive}
+            WHERE itilcategories_id = {$itilcategoriesId}
+        EOT;
         PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - sqlUpdate: ' . $sqlUpdate);
         $this->DB->queryOrDie($sqlUpdate, $this->DB->error());
     }
 
     public function getLastAssignmentIndex($itilcategoriesId) {
+        $itilcategoriesId = intval($itilcategoriesId);
         $sql = <<< EOT
-                SELECT last_assignment_index FROM {$this->rrAssignmentTable} 
-                WHERE itilcategories_id = {$itilcategoriesId} AND is_active = 1
-EOT;
+            SELECT last_assignment_index FROM {$this->rrAssignmentTable} 
+            WHERE itilcategories_id = {$itilcategoriesId} AND is_active = 1
+        EOT;
         PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - sql: ' . $sql);
         $resultCollection = $this->DB->queryOrDie($sql, $this->DB->error());
         $resultArray = iterator_to_array($resultCollection);
         PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - $resultArray: ' . print_r($resultArray, true));
         if (count($resultArray) === 0 || count($resultArray) > 1) {
             /**
-             * para o comportamento especificado da categoria não é necessário
+             * Para o comportamento especificado da categoria não é necessário
              * ou existem mais de uma linha para a categoria
              */
             return false;
@@ -356,5 +393,4 @@ EOT;
         PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - $resultArray: ' . print_r($resultArray, true));
         return $resultArray;
     }
-
 }

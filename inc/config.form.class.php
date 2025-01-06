@@ -46,7 +46,8 @@ EOT;
 
     public function displayContent() {
         $auto_assign_group = Html::cleanInputText(self::getAutoAssignGroup());
-        $auto_assign_tipe = Html::cleanInputText(self::getAutoAssignTipe());
+        $auto_assign_type = Html::cleanInputText(self::getAutoAssignType());
+        $auto_assign_mode = Html::cleanInputText(self::getAutoAssignMode());
         $settings = self::getSettings();
 
         // Gerar o token CSRF e armazená-lo na sessão
@@ -59,7 +60,7 @@ EOT;
         echo "<table class='tab_cadre_fixe'>";
         
         // Título do Formulário
-        echo "<tr><th colspan='4'>Distribuição rotativa de técnicos em chamados, considerando o grupo encarregado da Categoria ITIL</th></tr>";
+        echo "<tr><th colspan='4'>Distribuição inteligente de chamados, com base no grupo encarregado da Categoria ITIL</th></tr>";
         echo "<tr><th colspan='4'><hr /></th></tr>";
 
         echo "<tr><th colspan='4'>";
@@ -69,11 +70,18 @@ EOT;
         echo "</th></tr>";
 
         echo "<tr><th colspan='4'>";
-        echo "Atribuição por categoria, ou grupo encarregado? &nbsp;&nbsp;";
-        echo "<input type='radio' name='auto_assign_tipe' value='1'" . ($auto_assign_tipe ? " checked='checked'" : "") . "> Categoria&nbsp;&nbsp;";
-        echo "<input type='radio' name='auto_assign_tipe' value='0'" . (!$auto_assign_tipe ? " checked='checked'" : "") . "> Grupo";
+        echo "Atribuição do tecnico por Categoria ou Grupo encarregado? &nbsp;&nbsp;";
+        echo "<input type='radio' name='auto_assign_type' value='1'" . ($auto_assign_type ? " checked='checked'" : "") . "> Categoria&nbsp;&nbsp;";
+        echo "<input type='radio' name='auto_assign_type' value='0'" . (!$auto_assign_type ? " checked='checked'" : "") . "> Grupo";
         echo "<br><span style='font-size: 12px; color: #555;'>Quando categoria, a divisão é feita igualitariamente dentro de cada categoria, com base no grupo. Quando grupo, a divisão é feita igualitariamente entre categorias com o mesmo grupo.</span>";
-        echo "</th></tr>";  
+        echo "</th></tr>";
+
+        echo "<tr><th colspan='4'>";
+        echo "Atribuição do tecnico por Rodizio ou Balanceamento? (EM CONSTRUÇÃO) &nbsp;&nbsp;";
+        echo "<input type='radio' name='auto_assign_mode' value='1'" . ($auto_assign_mode ? " checked='checked'" : "") . "> Rodizio&nbsp;&nbsp;";
+        echo "<input type='radio' name='auto_assign_mode' value='0'" . (!$auto_assign_mode ? " checked='checked'" : "") . "> Balanceamento";
+        echo "<br><span style='font-size: 12px; color: #555;'>Quando Rodizio, a divisão é feita igualitariamente. Quando Balanceamento, a divisão é feita com base no tecnico com menos chamados abertos na fila.</span>";
+        echo "</th></tr>";
 
         echo "<tr><th colspan='4'><hr /></th></tr>";
         echo "<tr><th>ITIL Category</th><th>Grupo</th><th>Número de Membros</th><th>Configuração</th></tr>";
@@ -87,7 +95,7 @@ EOT;
             $is_active = $row['is_active'];
 
             echo "<tr>";
-            echo "<td>{$category_name}</td>";
+            echo "<td>{$category_name} ({$itilcategories_id})</td>";
             echo "<td>{$group_name}</td>";
             echo "<td>{$num_group_members}</td>";
             echo "<td>";
@@ -113,9 +121,14 @@ EOT;
         return $instance->getOptionAutoAssignGroup();
     }
 
-    protected static function getAutoAssignTipe() {
+    protected static function getAutoAssignType() {
         $instance = new PluginSmartAssignRRAssignmentsEntity();
-        return $instance->getOptionAutoAssignTipe();
+        return $instance->getOptionAutoAssignType();
+    }
+
+    protected static function getAutoAssignMode() {
+        $instance = new PluginSmartAssignRRAssignmentsEntity();
+        return $instance->getOptionAutoAssignMode();
     }
 
     public function saveSettings() {
@@ -129,11 +142,10 @@ EOT;
 
         //Salvar opções)
         $rrAssignmentsEntity->updateAutoAssignGroup($_POST['auto_assign_group']);
-        $rrAssignmentsEntity->updateAutoAssignTipe($_POST['auto_assign_tipe']);
+        $rrAssignmentsEntity->updateAutoAssignType($_POST['auto_assign_type']);
+        $rrAssignmentsEntity->updateAutoAssignMode($_POST['auto_assign_mode']);
 
-        /**
-         * Salvar todas as atribuições
-         */
+        // Salvar todas as atribuições
         foreach (self::getSettings() as $row) {
             $itilCategoryId = $_POST["itilcategories_id_{$row['id']}"];
             $newValue = $_POST["is_active_{$row['id']}"];

@@ -84,7 +84,7 @@ EOT;
                 $newAssignmentIndex = 0;
             }
         }
-		if ($this->rrAssignmentsEntity->getOptionAutoAssignTipe() === 1) {
+		if ($this->rrAssignmentsEntity->getOptionAutoAssignType() === 1) {
 			$this->rrAssignmentsEntity->updateLastAssignmentIndexCategoria($itilcategoriesId, $newAssignmentIndex);
 		} else {
 			$this->rrAssignmentsEntity->updateLastAssignmentIndexGrupo($itilcategoriesId, $newAssignmentIndex);
@@ -122,7 +122,6 @@ EOT;
             DELETE FROM glpi_groups_tickets 
             WHERE tickets_id = {$ticketId};
 EOT;
-
         PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - sqlDelete_glpi_groups_tickets: ' . $sqlDelete_glpi_groups_tickets);
         $this->DB->queryOrDie($sqlDelete_glpi_groups_tickets, $this->DB->error());
 
@@ -130,10 +129,21 @@ EOT;
          * insert the new assignment, based on rr
          */
         $sqlInsert_glpi_tickets_users = <<< EOT
-                    INSERT INTO glpi_tickets_users (tickets_id, users_id, type, use_notification, alternative_email) VALUES ({$ticketId}, {$userId}, 2, 1, '')
+                    INSERT INTO glpi_tickets_users (tickets_id, users_id, type, use_notification, alternative_email) VALUES ({$ticketId}, {$userId}, 2, 1, '');
 EOT;
         PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - sqlInsert_glpi_tickets_users: ' . $sqlInsert_glpi_tickets_users);
         $this->DB->queryOrDie($sqlInsert_glpi_tickets_users, $this->DB->error());
+ 
+        /**
+         * insert the new assignment, based on rr
+         */  
+        $sqlUpdate_glpi_tickets = <<< EOT
+            UPDATE glpi_tickets 
+            SET status = 2 
+            WHERE glpi_tickets.status = 1 AND glpi_tickets.id = {$ticketId};
+EOT;
+        PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - sqlUpdate_glpi_tickets: ' . $sqlUpdate_glpi_tickets);
+        $this->DB->queryOrDie($sqlUpdate_glpi_tickets, $this->DB->error());
 
         // if auto group assign is enabled assign the group too
 
