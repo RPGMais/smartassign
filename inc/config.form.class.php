@@ -77,7 +77,7 @@ EOT;
         echo "</th></tr>";
 
         echo "<tr><th colspan='4'>";
-        echo "Atribuição do tecnico por Rodizio ou Balanceamento? (EM CONSTRUÇÃO) &nbsp;&nbsp;";
+        echo "Atribuição do tecnico por Rodizio ou Balanceamento? &nbsp;&nbsp;";
         echo "<input type='radio' name='auto_assign_mode' value='1'" . ($auto_assign_mode ? " checked='checked'" : "") . "> Rodizio&nbsp;&nbsp;";
         echo "<input type='radio' name='auto_assign_mode' value='0'" . (!$auto_assign_mode ? " checked='checked'" : "") . "> Balanceamento";
         echo "<br><span style='font-size: 12px; color: #555;'>Quando Rodizio, a divisão é feita igualitariamente. Quando Balanceamento, a divisão é feita com base no tecnico com menos chamados abertos na fila.</span>";
