@@ -82,8 +82,8 @@ EOT;
                     WHERE tu.type = 2
                     AND t.status NOT IN (5, 6)
                     AND t.is_deleted = 0
-                    AND gu.groups_id = 15
-                    AND gt.groups_id = 15
+                    AND gu.groups_id = {$groupId}
+                    AND gt.groups_id = {$groupId}
                     AND gt.type = 2  -- Adicionando a verificação para `type = 2`
                     GROUP BY tu.users_id
                     ORDER BY active_tickets ASC, tu.users_id ASC
