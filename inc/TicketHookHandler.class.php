@@ -136,7 +136,7 @@ EOT;
         $ticketId = $this->getTicketId($item);
         $this->setAssignment($ticketId, $userId, $itilcategoriesId);
         return $userId;
-    }    
+    }
     
 
     protected function getLastAssignmentIndex(CommonDBTM $item) {
