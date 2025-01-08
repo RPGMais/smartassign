@@ -73,6 +73,11 @@ EOT;
                 return;
             }
     
+            $extraCondition = '';
+            if ($this->rrAssignmentsEntity->getOptionAutoAssignType() === 1) {
+                $extraCondition = "AND t.itilcategories_id = {$itilcategoriesId}";
+            }
+    
             $sql = <<<EOT
                     SELECT tu.users_id, COUNT(t.id) AS active_tickets
                     FROM glpi_tickets_users tu
@@ -84,11 +89,12 @@ EOT;
                     AND t.is_deleted = 0
                     AND gu.groups_id = {$groupId}
                     AND gt.groups_id = {$groupId}
-                    AND gt.type = 2  -- Adicionando a verificação para `type = 2`
+                    AND gt.type = 2
+                    {$extraCondition}
                     GROUP BY tu.users_id
                     ORDER BY active_tickets ASC, tu.users_id ASC
-                    LIMIT 10;
-            EOT;    
+                    LIMIT 1;
+            EOT;
             $resultCollection = $this->DB->queryOrDie($sql, $this->DB->error());
             $resultArray = iterator_to_array($resultCollection);
     
@@ -130,7 +136,7 @@ EOT;
         $ticketId = $this->getTicketId($item);
         $this->setAssignment($ticketId, $userId, $itilcategoriesId);
         return $userId;
-    }
+    }    
     
 
     protected function getLastAssignmentIndex(CommonDBTM $item) {
@@ -163,7 +169,7 @@ EOT;
          * insert the new assignment, based on rr
          */
         $sqlInsert_glpi_tickets_users = <<< EOT
-                    INSERT INTO glpi_tickets_users (tickets_id, users_id, type, use_notification, alternative_email) VALUES ({$ticketId}, {$userId}, 2, 1, '');
+            INSERT INTO glpi_tickets_users (tickets_id, users_id, type, use_notification, alternative_email) VALUES ({$ticketId}, {$userId}, 2, 1, '');
 EOT;
         PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - sqlInsert_glpi_tickets_users: ' . $sqlInsert_glpi_tickets_users);
         $this->DB->queryOrDie($sqlInsert_glpi_tickets_users, $this->DB->error());

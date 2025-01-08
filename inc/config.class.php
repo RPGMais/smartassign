@@ -5,7 +5,7 @@ class SmartAssignConfigClass {
     public static $PLUGIN_SMARTASSIGN_ENV = 'desenvolvimento';
     public static $PLUGIN_SMARTASSIGN_NAME = 'Smart Assign';
     public static $PLUGIN_SMARTASSIGN_CODE = 'smartassign';
-    public static $PLUGIN_SMARTASSIGN_VERSION = '2.0.0';
+    public static $PLUGIN_SMARTASSIGN_VERSION = '2.0.1';
     public static $PLUGIN_SMARTASSIGN_AUTHOR = 'Richard Loureiro';
     public static $PLUGIN_SMARTASSIGN_LICENSE = 'GPLv3';
     public static $PLUGIN_SMARTASSIGN_HOME_PAGE = 'https://www.linkedin.com/in/richard-ti/';
