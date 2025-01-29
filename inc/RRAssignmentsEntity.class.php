@@ -63,40 +63,92 @@ EOT;
 
     protected function createTable() {
         PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - entrou...');
-
-        // Criar tabela de configurações
+    
+        // Verificar e corrigir tabela de configurações
         if (!$this->DB->tableExists($this->rrAssignmentTable)) {
-            $sqlCreateAssign = <<< EOT
+            $sqlCreateAssign = <<<EOT
                 CREATE TABLE IF NOT EXISTS {$this->rrAssignmentTable} (
-                    id INT(11) NOT NULL AUTO_INCREMENT,
-                    itilcategories_id INT(11),
-                    is_active INT(1) DEFAULT 0,
-                    last_assignment_index INT(11) DEFAULT NULL,
+                    id INT NOT NULL AUTO_INCREMENT,
+                    itilcategories_id INT,
+                    is_active INT DEFAULT NULL,
+                    last_assignment_index INT DEFAULT NULL,
                     PRIMARY KEY (id),
-                    UNIQUE INDEX ix_itilcategories_uq (itilcategories_id ASC)
+                    UNIQUE INDEX ix_itilcategories_uq (itilcategories_id)
                 ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-EOT;
+    EOT;
             PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - sqlCreate: ' . $sqlCreateAssign);
             $this->DB->queryOrDie($sqlCreateAssign, $this->DB->error());
+        } else {
+            // Verificar e corrigir estrutura existente
+            $this->checkAndAlterTable($this->rrAssignmentTable, [
+                'id' => 'INT NOT NULL AUTO_INCREMENT',
+                'itilcategories_id' => 'INT',
+                'is_active' => 'INT DEFAULT NULL',
+                'last_assignment_index' => 'INT DEFAULT NULL',
+                'PRIMARY KEY' => '(id)',
+                'UNIQUE INDEX' => 'ix_itilcategories_uq (itilcategories_id)'
+            ]);
         }
-
-        /**
-         * Criar tabela de opções
-         */
+    
+        // Verificar e corrigir tabela de opções
         if (!$this->DB->tableExists($this->rrOptionsTable)) {
-            $sqlCreateOption = <<< EOT
+            $sqlCreateOption = <<<EOT
                 CREATE TABLE IF NOT EXISTS {$this->rrOptionsTable} (
-                    id INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-                    auto_assign_group INT(1) DEFAULT 1,
-                    auto_assign_type INT(1) DEFAULT 1,
-                    auto_assign_mode INT(1) DEFAULT 1,
+                    id INT NOT NULL AUTO_INCREMENT,
+                    auto_assign_group INT DEFAULT 1,
+                    auto_assign_type INT DEFAULT 1,
+                    auto_assign_mode INT DEFAULT 1,
                     PRIMARY KEY (id)
                 ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-EOT;
+    EOT;
             PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - sqlCreate: ' . $sqlCreateOption);
             $this->DB->queryOrDie($sqlCreateOption, $this->DB->error());
+        } else {
+            // Verificar e corrigir estrutura existente
+            $this->checkAndAlterTable($this->rrOptionsTable, [
+                'id' => 'INT NOT NULL AUTO_INCREMENT',
+                'auto_assign_group' => 'INT DEFAULT 1',
+                'auto_assign_type' => 'INT DEFAULT 1',
+                'auto_assign_mode' => 'INT DEFAULT 1',
+                'PRIMARY KEY' => '(id)',
+            ]);
         }
     }
+    
+    // Função para verificar e alterar tabela
+    private function checkAndAlterTable($tableName, $desiredStructure) {
+        // Verifica a estrutura atual da tabela
+        $columns = $this->DB->getColumns($tableName);
+        $currentStructure = [];
+    
+        foreach ($columns as $column) {
+            $currentStructure[$column['Field']] = $column['Type'];
+        }
+    
+        // Verificar e ajustar colunas
+        foreach ($desiredStructure as $column => $definition) {
+            if (!isset($currentStructure[$column])) {
+                // Adicionar coluna se não existir
+                $this->DB->queryOrDie("ALTER TABLE {$tableName} ADD COLUMN {$column} {$definition}");
+            } elseif ($currentStructure[$column] !== $definition) {
+                // Alterar coluna se a definição for diferente
+                $this->DB->queryOrDie("ALTER TABLE {$tableName} MODIFY COLUMN {$column} {$definition}");
+            }
+        }
+    
+        // Verificar e ajustar índices
+        $currentIndexes = $this->DB->getIndexes($tableName);
+        $indexNames = array_column($currentIndexes, 'Key_name');
+        foreach ($desiredStructure as $key => $definition) {
+            if (strpos($key, 'INDEX') !== false) {
+                $indexName = $definition;
+                if (!in_array($indexName, $indexNames)) {
+                    // Adicionar índice se não existir
+                    $this->DB->queryOrDie("ALTER TABLE {$tableName} ADD INDEX {$indexName}");
+                }
+            }
+        }
+    }    
 
     protected function truncateTable() {
         PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - entrou...');

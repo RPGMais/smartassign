@@ -72,12 +72,16 @@ class SmartAssignConfigClass {
 
     public static function hookAddSource($uriArray, $hook, $sourceFile) {
         global $PLUGIN_HOOKS;
-
+    
         if (!is_array($uriArray)) {
             throw new InvalidArgumentException("Estrutura de URI inválida, esperado array.");
         }
+    
+        // Verifica se 'REQUEST_URI' existe antes de acessá-lo
+        $requestUri = PluginSmartAssignRequest::getServerParam('REQUEST_URI') ?? '';
+    
         foreach ($uriArray as $uri) {
-            if (strpos(PluginSmartAssignRequest::getServerParam('REQUEST_URI'), $uri) !== false) {
+            if ($requestUri !== '' && strpos($requestUri, $uri) !== false) {
                 $PLUGIN_HOOKS[$hook][self::$PLUGIN_SMARTASSIGN_CODE] = $sourceFile;
                 PluginSmartAssignLogger::addWarning(__METHOD__ . " - recurso $sourceFile carregado!");
                 break;
