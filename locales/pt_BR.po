@@ -1,0 +1,79 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: SmartAssign\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-01-13\n"
+"PO-Revision-Date: 2025-01-13 14:34-0300\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: pt_BR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.5\n"
+
+msgid "Access denied"
+msgstr "Acesso negado"
+
+msgid "Smart ticket distribution based on ITIL Category group"
+msgstr "Distribuição inteligente de chamados, com base no grupo encarregado da Categoria ITIL"
+
+msgid "Assign the ITIL Category group?"
+msgstr "Atribuir o grupo encarregado da Categoria ITIL?"
+
+msgid "Yes"
+msgstr "Sim"
+
+msgid "No"
+msgstr "Não"
+
+msgid "Assign technician by ITIL Category or group?"
+msgstr "Atribuição do técnico por Categoria ou Grupo encarregado?"
+
+msgid "Category"
+msgstr "Categoria"
+
+msgid "Group"
+msgstr "Grupo"
+
+msgid "For category, the distribution is done equally within each category based on the group. For group, the distribution is done equally among categories with the same group."
+msgstr "Quando categoria, a divisão é feita igualitariamente dentro de cada categoria, com base no grupo. Quando grupo, a divisão é feita igualitariamente entre categorias com o mesmo grupo."
+
+msgid "Assign technician by rotation or balancing?"
+msgstr "Atribuição do técnico por Rodízio ou Balanceamento?"
+
+msgid "Rotation"
+msgstr "Rodízio"
+
+msgid "Balancing"
+msgstr "Balanceamento"
+
+msgid "For rotation, distribution is equal. For balancing, distribution is based on the technician with fewer open tickets in the queue."
+msgstr "Quando Rodízio, a divisão é feita igualitariamente. Quando Balanceamento, a divisão é feita com base no técnico com menos chamados abertos na fila."
+
+msgid "ITIL Category"
+msgstr "Categoria ITIL"
+
+msgid "Number of members"
+msgstr "Número de membros"
+
+msgid "Configuration"
+msgstr "Configuração"
+
+msgid "No group assigned"
+msgstr "Nenhum grupo atribuído"
+
+msgid "Active"
+msgstr "Ativado"
+
+msgid "Inactive"
+msgstr "Desativado"
+
+msgid "Save"
+msgstr "Salvar"
+
+msgid "Cancel"
+msgstr "Cancelar"
+
+msgid "Invalid CSRF token"
+msgstr "Token CSRF inválido"

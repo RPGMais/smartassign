@@ -6,17 +6,19 @@
     <logo>https://raw.githubusercontent.com/RPGMais/smartassign/main/pics/smartassign-logo.png</logo>
     <description>
         <short>
-            <en>This plugin allows the assignment of a ticket using a round-robin policy.</en>
-            <it>Questo plugin permette l'assegnazione di un ticket ad un tecnico utilizzando una politica di smartassign.</it>
+            <en_US>This plugin allows the assignment of a ticket using a smartassign policy.</en_US>
+            <en_GB>This plugin allows the assignment of a ticket using a smartassign policy.</en_GB>
+            <it>Questo plugin permette l'assegnazione di un ticket utilizzando una politica di smartassign.</it>
             <pt_BR>Este plugin permite a atribuição de um chamado utilizando uma política de smartassign.</pt_BR>
-            <fr>Ce plugin permet l'attribution d'un ticket en utilisant une politique de round-robin.</fr>
-            <es>Este plugin permite la asignación de un ticket utilizando una política de round-robin.</es>
+            <fr>Ce plugin permet l'attribution d'un ticket en utilisant une politique de smartassign.</fr>
+            <es>Este plugin permite la asignación de un ticket utilizando una política de smartassign.</es>
         </short>
         <long>
-            <en>This plugin allows the automatic assignment and distribution of tickets based on the group responsible for the ITIL category. The plugin operates in two modes: Load Balancing, where tickets are distributed evenly among the group members, or Round-Robin, where tickets are assigned alternately.</en>
+            <en_US>This plugin allows the automatic assignment and distribution of tickets based on the group responsible for the ITIL category. The plugin operates in two modes: Balancing, where tickets are distributed evenly among the group members, or Rotation, where tickets are assigned alternately.</en_US>
+            <en_GB>This plugin allows the automatic assignment and distribution of tickets based on the group responsible for the ITIL category. The plugin operates in two modes: Balancing, where tickets are distributed evenly among the group members, or Rotation, where tickets are assigned alternately.</en_GB>
             <it>Questo plugin permette l'assegnazione e distribuzione automatica dei ticket in base al gruppo responsabile della categoria ITIL. Il plugin opera in due modalità: Bilanciamento, dove i ticket vengono distribuiti equamente tra i membri del gruppo, o Rotazione, dove i ticket vengono assegnati in modo alternato.</it>
             <pt_BR>Atribuição e distribuição automática de chamados com base no grupo responsável pela categoria ITIL. O plugin opera em duas modalidades: Balanceamento, onde os chamados são distribuídos de maneira equilibrada entre os membros do grupo, ou Rodízio, em que os chamados são atribuídos de forma alternada.</pt_BR>
-            <fr>Ce plugin permet l'attribution et la distribution automatique des tickets en fonction du groupe responsable de la catégorie ITIL. Le plugin fonctionne en deux modes : Répartition, où les tickets sont distribués de manière équilibrée entre les membres du groupe, ou Rotation, où les tickets sont attribués de manière alternée.</fr>
+            <fr>Ce plugin permet l'attribution et la distribution automatique des tickets en fonction du groupe responsable de la catégorie ITIL. Le plugin fonctionne en deux modes : Équilibrage, où les tickets sont distribués de manière équilibrée entre les membres du groupe, ou Rotation, où les tickets sont attribués de manière alternée.</fr>
             <es>Este plugin permite la asignación y distribución automática de tickets en función del grupo responsable de la categoría ITIL. El plugin funciona en dos modos: Balanceo, donde los tickets se distribuyen equitativamente entre los miembros del grupo, o Rotación, donde los tickets se asignan de forma alternada.</es>
         </long>
     </description>
@@ -29,23 +31,33 @@
     </authors>
     <versions>
         <version>
-            <num>2.0.1</num>
+            <num>2.1.0</num>
             <compatibility>9.5, ~10.0.0</compatibility>
-            <download_url>https://github.com/RPGMais/smartassign/releases/download/v2.0.1-beta/smartassign-v2.0.1.tar.gz</download_url>
+            <download_url>https://github.com/RPGMais/smartassign/releases/download/v2.1.0-beta/smartassign-v2.1.0.tar.gz</download_url>
         </version>
     </versions>
     <langs>
+        <lang>en_US</lang>
+        <lang>en_GB</lang>
         <lang>pt_BR</lang>
+        <lang>es</lang>
+        <lang>fr</lang>
+        <lang>it</lang>
     </langs>
     <license>GPL v3</license>
     <tags>
-        <en>
+        <en_US>
             <tag>Ticket</tag>
             <tag>Helpdesk</tag>
             <tag>Technician</tag>
-        </en>
+        </en_US>
+        <en_GB>
+            <tag>Ticket</tag>
+            <tag>Helpdesk</tag>
+            <tag>Technician</tag>
+        </en_GB>
         <it>
-            <tag>Chiamata</tag>
+            <tag>Ticket</tag>
             <tag>Assistenza</tag>
             <tag>Tecnico</tag>
         </it>

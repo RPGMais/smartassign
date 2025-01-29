@@ -15,6 +15,16 @@ function plugin_init_smartassign() {
     $PLUGIN_HOOKS['csrf_compliant']['smartassign'] = true;
     $PLUGIN_HOOKS['menu_toadd']['smartassign'] = ['plugins' => 'SmartAssignConfigClass'];
 
+    // Caminho para os arquivos de tradução usando a constante
+    $localeDir = PLUGIN_SMARTASSIGN_DIR . '/locales';
+    $domain = 'smartassign';
+
+    // Configuração de gettext para carregar traduções
+    if (function_exists('bindtextdomain')) {
+        bindtextdomain($domain, $localeDir); // Define o diretório de traduções
+        textdomain($domain); // Define o domínio de tradução atual
+    }
+
     // Inicializa configurações do plugin
     SmartAssignConfigClass::init();
     SmartAssignConfigClass::loadSources();

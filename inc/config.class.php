@@ -5,7 +5,7 @@ class SmartAssignConfigClass {
     public static $PLUGIN_SMARTASSIGN_ENV = 'desenvolvimento';
     public static $PLUGIN_SMARTASSIGN_NAME = 'Smart Assign';
     public static $PLUGIN_SMARTASSIGN_CODE = 'smartassign';
-    public static $PLUGIN_SMARTASSIGN_VERSION = '2.0.1';
+    public static $PLUGIN_SMARTASSIGN_VERSION = '2.1.0';
     public static $PLUGIN_SMARTASSIGN_AUTHOR = 'Richard Loureiro';
     public static $PLUGIN_SMARTASSIGN_LICENSE = 'GPLv3';
     public static $PLUGIN_SMARTASSIGN_HOME_PAGE = 'https://www.linkedin.com/in/richard-ti/';
@@ -97,14 +97,14 @@ class SmartAssignConfigClass {
 	
 	// Define o nome do menu.
     static function getMenuName() {
-        return __('Smart Assign');
+        return __('Smart Assign', 'smartassign');
     }
 
     // Define o conteúdo do menu.
     static function getMenuContent() {
         global $CFG_GLPI;
         $menu = [];
-        $menu['title'] = __('Smart Assign');
+        $menu['title'] = __('Smart Assign', 'smartassign');
         $menu['page']  = $CFG_GLPI['root_doc'] . "/plugins/smartassign/front/config.form.php";
 		$menu['icon']  = 'fas fa-user-check';
         return $menu;

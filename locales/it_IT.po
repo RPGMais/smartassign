@@ -1,0 +1,80 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: GLPI - Smart Assign Plugin\n"
+"Report-Msgid-Bugs-To: richard.infoo@gmail.com\n"
+"POT-Creation-Date: 2025-01-13\n"
+"PO-Revision-Date: 2025-01-13 14:47-0300\n"
+"Last-Translator: \n"
+"Language-Team: Italian\n"
+"Language: it_IT\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Poedit 3.5\n"
+
+msgid "Access denied"
+msgstr "Accesso negato"
+
+msgid "Smart ticket distribution based on ITIL Category group"
+msgstr "Distribuzione intelligente dei ticket basata sul gruppo di categoria ITIL"
+
+msgid "Assign the ITIL Category group?"
+msgstr "Assegnare il gruppo della categoria ITIL?"
+
+msgid "Yes"
+msgstr "Sì"
+
+msgid "No"
+msgstr "No"
+
+msgid "Assign technician by ITIL Category or group?"
+msgstr "Assegnare il tecnico per categoria ITIL o gruppo?"
+
+msgid "Category"
+msgstr "Categoria"
+
+msgid "Group"
+msgstr "Gruppo"
+
+msgid "For category, the distribution is done equally within each category based on the group. For group, the distribution is done equally among categories with the same group."
+msgstr "Per categoria, la distribuzione è effettuata equamente all'interno di ogni categoria in base al gruppo. Per gruppo, la distribuzione è effettuata equamente tra le categorie con lo stesso gruppo."
+
+msgid "Assign technician by rotation or balancing?"
+msgstr "Assegnare il tecnico per rotazione o bilanciamento?"
+
+msgid "Rotation"
+msgstr "Rotazione"
+
+msgid "Balancing"
+msgstr "Bilanciamento"
+
+msgid "For rotation, distribution is equal. For balancing, distribution is based on the technician with fewer open tickets in the queue."
+msgstr "Per rotazione, la distribuzione è uguale. Per bilanciamento, la distribuzione si basa sul tecnico con meno ticket aperti in coda."
+
+msgid "ITIL Category"
+msgstr "Categoria ITIL"
+
+msgid "Number of members"
+msgstr "Numero di membri"
+
+msgid "Configuration"
+msgstr "Configurazione"
+
+msgid "No group assigned"
+msgstr "Nessun gruppo assegnato"
+
+msgid "Active"
+msgstr "Attivo"
+
+msgid "Inactive"
+msgstr "Inattivo"
+
+msgid "Save"
+msgstr "Salva"
+
+msgid "Cancel"
+msgstr "Annulla"
+
+msgid "Invalid CSRF token"
+msgstr "Token CSRF non valido"
