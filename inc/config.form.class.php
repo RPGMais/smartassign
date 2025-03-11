@@ -84,28 +84,53 @@ EOT;
         echo "</th></tr>";
 
         echo "<tr><th colspan='4'><hr /></th></tr>";
-        echo "<tr><th>" . __('ITIL Category', 'smartassign') . "</th><th>" . __('Group', 'smartassign') . "</th><th>" . __('Number of members', 'smartassign') . "</th><th>" . __('Configuration', 'smartassign') . "</th></tr>";
+		// Início da linha do cabeçalho com a inclusão do botão
+		echo "<tr><th>" . __('ITIL Category', 'smartassign') . "</th><th>" . __('Group', 'smartassign') . "</th><th>" . __('Number of members', 'smartassign') . "</th>";
 
-        foreach ($settings as $row) {
-            $id = $row['id'];
-            $itilcategories_id = $row['itilcategories_id'];
-            $category_name = Html::cleanInputText($row['category_name']);
-            $group_name = isset($row['group_name']) ? Html::cleanInputText($row['group_name']) : "<em>" . __('No group assigned', 'smartassign') . "</em>";
-            $num_group_members = isset($row['num_group_members']) ? Html::cleanInputText($row['num_group_members']) : "<em>N/A</em>";
-            $is_active = $row['is_active'];
+		// Botão "Select/Unselect All" colocado ao lado da opção "Configuration"
+		echo "<th style='text-align: left;'>";
+		echo "<button type='button' id='toggleSelectButton'>" . __('Select/Unselect All', 'smartassign') . "</button>";
+		echo "</th>";
 
-            echo "<tr>";
-            echo "<td>{$category_name} ({$itilcategories_id})</td>";
-            echo "<td>{$group_name}</td>";
-            echo "<td>{$num_group_members}</td>";
-            echo "<td>";
-            echo Html::hidden("itilcategories_id_{$id}", ['value' => $itilcategories_id]);
-            echo "<input type='radio' name='is_active_{$id}' value='1' " . ($is_active ? "checked='checked'" : "") . "> " . __('Active', 'smartassign') . "&nbsp;&nbsp;";
-            echo "<input type='radio' name='is_active_{$id}' value='0' " . (!$is_active ? "checked='checked'" : "") . "> " . __('Inactive', 'smartassign') . "";
-            echo "</td>";
-            echo "</tr>";
-        }
+		// Fechamento da linha do cabeçalho
+		echo "</tr>";
 
+		foreach ($settings as $row) {
+			$id = $row['id'];
+			$itilcategories_id = $row['itilcategories_id'];
+			$category_name = Html::cleanInputText($row['category_name']);
+			$group_name = isset($row['group_name']) ? Html::cleanInputText($row['group_name']) : "<em>" . __('No group assigned', 'smartassign') . "</em>";
+			$num_group_members = isset($row['num_group_members']) ? Html::cleanInputText($row['num_group_members']) : "<em>N/A</em>";
+			$is_active = $row['is_active'];
+
+			echo "<tr>";
+			echo "<td>{$category_name} ({$itilcategories_id})</td>";
+			echo "<td>{$group_name}</td>";
+			echo "<td>{$num_group_members}</td>";
+			echo "<td>";
+			echo Html::hidden("itilcategories_id_{$id}", ['value' => $itilcategories_id]);
+			echo "<input type='radio' name='is_active_{$id}' value='1' " . ($is_active ? "checked='checked'" : "") . "> " . __('Active', 'smartassign') . "&nbsp;&nbsp;";
+			echo "<input type='radio' name='is_active_{$id}' value='0' " . (!$is_active ? "checked='checked'" : "") . "> " . __('Inactive', 'smartassign') . "";			
+			echo "</td>";
+			echo "</tr>";
+		}
+
+		// Script JavaScript
+		echo "<script>
+			document.getElementById('toggleSelectButton').addEventListener('click', function() {
+				let radios = document.querySelectorAll(\"input[type='radio'][name^='is_active_']\");
+				let allSelected = Array.from(radios).every(radio => radio.value == '1' && radio.checked);
+
+				radios.forEach(radio => {
+					// Alterna o valor entre 0 e 1 e altera o estado de checked
+					if (radio.value == '1' || radio.value == '0') {
+						radio.value = (radio.value == '0') ? '1' : '0';
+						radio.checked = (radio.value == '1');
+					}
+				});
+			});
+		</script>";
+		
         echo "<tr><td colspan='4'><hr/></td></tr>";
 		echo "<tr><td colspan='4' style='text-align: right;'><input type='submit' name='save' class='submit' value=" . __('Save', 'smartassign') . ">&nbsp;&nbsp;<input type='submit' class='submit' name='cancel' value=" . __('Cancel', 'smartassign') . "></td></tr>";
         echo "</table>";

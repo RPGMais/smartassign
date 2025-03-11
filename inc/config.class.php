@@ -5,12 +5,12 @@ class SmartAssignConfigClass {
     public static $PLUGIN_SMARTASSIGN_ENV = 'desenvolvimento';
     public static $PLUGIN_SMARTASSIGN_NAME = 'Smart Assign';
     public static $PLUGIN_SMARTASSIGN_CODE = 'smartassign';
-    public static $PLUGIN_SMARTASSIGN_VERSION = '2.1.0';
+    public static $PLUGIN_SMARTASSIGN_VERSION = '2.2.0';
     public static $PLUGIN_SMARTASSIGN_AUTHOR = 'Richard Loureiro';
     public static $PLUGIN_SMARTASSIGN_LICENSE = 'GPLv3';
     public static $PLUGIN_SMARTASSIGN_HOME_PAGE = 'https://www.linkedin.com/in/richard-ti/';
-    public static $PLUGIN_SMARTASSIGN_MIN_GLPI_VERSION = '9.5';
-    public static $PLUGIN_SMARTASSIGN_GLPI_VERSION_ERROR = "Este plugin requer GLPI >= 9.5 e GLPI <= 11";
+    public static $PLUGIN_SMARTASSIGN_MIN_GLPI_VERSION = '10';
+    public static $PLUGIN_SMARTASSIGN_GLPI_VERSION_ERROR = "Este plugin requer GLPI >= 10 e GLPI <= 11";
     public static $PLUGIN_SMARTASSIGN_MAX_GLPI_VERSION = '11';
     public static $PLUGIN_SMARTASSIGN_MIN_PHP_VERSION = '7.3';
 

@@ -61,82 +61,88 @@ EOT;
         return $resultArray;
     }
 
-    protected function assignTicket(CommonDBTM $item) {
-        $itilcategoriesId = $this->getTicketCategory($item);
-    
-        if ($this->rrAssignmentsEntity->getOptionAutoAssignMode() === 0) {
-            // Modo balanceamento ativo
-            $groupId = $this->rrAssignmentsEntity->getGroupByItilCategory($itilcategoriesId);
-    
-            if ($groupId === false) {
-                PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - Grupo não encontrado para a categoria: ' . $itilcategoriesId);
-                return;
-            }
-    
-            $extraCondition = '';
-            if ($this->rrAssignmentsEntity->getOptionAutoAssignType() === 1) {
-                $extraCondition = "AND t.itilcategories_id = {$itilcategoriesId}";
-            }
-    
-            $sql = <<<EOT
-                    SELECT tu.users_id, COUNT(t.id) AS active_tickets
-                    FROM glpi_tickets_users tu
-                    JOIN glpi_tickets t ON tu.tickets_id = t.id
-                    JOIN glpi_groups_users gu ON tu.users_id = gu.users_id
-                    JOIN glpi_groups_tickets gt ON t.id = gt.tickets_id
-                    WHERE tu.type = 2
-                    AND t.status NOT IN (5, 6)
-                    AND t.is_deleted = 0
-                    AND gu.groups_id = {$groupId}
-                    AND gt.groups_id = {$groupId}
-                    AND gt.type = 2
-                    {$extraCondition}
-                    GROUP BY tu.users_id
-                    ORDER BY active_tickets ASC, tu.users_id ASC
-                    LIMIT 1;
-            EOT;
-            $resultCollection = $this->DB->queryOrDie($sql, $this->DB->error());
-            $resultArray = iterator_to_array($resultCollection);
-    
-            if (count($resultArray) === 0) {
-                PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - Nenhum técnico disponível no grupo: ' . $groupId);
-                return;
-            }
-    
-            $userId = $resultArray[0]['users_id'];
-        } else {
-            // Modo rodízio
-            if (($lastAssignmentIndex = $this->getLastAssignmentIndex($item)) === false) {
-                PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - Nada a fazer (categoria desativada ou não configurada; índice: ' . $lastAssignmentIndex . ')');
-                return;
-            }
-    
-            $categoryGroupMembers = $this->getGroupsUsersByCategory($this->getTicketCategory($item));
-            if (count($categoryGroupMembers) === 0) {
-                PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - Categoria sem grupo ou grupo sem usuários');
-                return;
-            }
-    
-            $newAssignmentIndex = isset($lastAssignmentIndex) ? $lastAssignmentIndex + 1 : 0;
-    
-            if ($newAssignmentIndex > (count($categoryGroupMembers) - 1)) {
-                $newAssignmentIndex = $newAssignmentIndex % count($categoryGroupMembers);
-            }
-    
-            if ($this->rrAssignmentsEntity->getOptionAutoAssignType() === 1) {
-                $this->rrAssignmentsEntity->updateLastAssignmentIndexCategoria($itilcategoriesId, $newAssignmentIndex);
-            } else {
-                $this->rrAssignmentsEntity->updateLastAssignmentIndexGrupo($itilcategoriesId, $newAssignmentIndex);
-            }
-    
-            $userId = $categoryGroupMembers[$newAssignmentIndex]['UserId'];
-        }
-    
-        // Atribuir o ticket ao técnico selecionado
-        $ticketId = $this->getTicketId($item);
-        $this->setAssignment($ticketId, $userId, $itilcategoriesId);
-        return $userId;
-    }
+	protected function assignTicket(CommonDBTM $item) {
+		// Obtenção da categoria do ticket
+		$itilcategoriesId = $this->getTicketCategory($item);
+
+		// Verifica se itilcategoriesId não está definido ou é inválido
+		if (!$itilcategoriesId) {
+			return;  // Ignora a execução se itilcategoriesId não for válido
+		}
+
+		if ($this->rrAssignmentsEntity->getOptionAutoAssignMode() === 0) {
+			// Modo balanceamento ativo
+			$groupId = $this->rrAssignmentsEntity->getGroupByItilCategory($itilcategoriesId);
+
+			if ($groupId === false) {
+				PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - Grupo não encontrado para a categoria: ' . $itilcategoriesId);
+				return;
+			}
+
+			$extraCondition = '';
+			if ($this->rrAssignmentsEntity->getOptionAutoAssignType() === 1) {
+				$extraCondition = "AND t.itilcategories_id = {$itilcategoriesId}";
+			}
+
+			$sql = <<<EOT
+					SELECT tu.users_id, COUNT(t.id) AS active_tickets
+					FROM glpi_tickets_users tu
+					JOIN glpi_tickets t ON tu.tickets_id = t.id
+					JOIN glpi_groups_users gu ON tu.users_id = gu.users_id
+					JOIN glpi_groups_tickets gt ON t.id = gt.tickets_id
+					WHERE tu.type = 2
+					AND t.status NOT IN (5, 6)
+					AND t.is_deleted = 0
+					AND gu.groups_id = {$groupId}
+					AND gt.groups_id = {$groupId}
+					AND gt.type = 2
+					{$extraCondition}
+					GROUP BY tu.users_id
+					ORDER BY active_tickets ASC, tu.users_id ASC
+					LIMIT 1;
+			EOT;
+			$resultCollection = $this->DB->queryOrDie($sql, $this->DB->error());
+			$resultArray = iterator_to_array($resultCollection);
+
+			if (count($resultArray) === 0) {
+				PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - Nenhum técnico disponível no grupo: ' . $groupId);
+				return;
+			}
+
+			$userId = $resultArray[0]['users_id'];
+		} else {
+			// Modo rodízio
+			if (($lastAssignmentIndex = $this->getLastAssignmentIndex($item)) === false) {
+				PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - Nada a fazer (categoria desativada ou não configurada; índice: ' . $lastAssignmentIndex . ')');
+				return;
+			}
+
+			$categoryGroupMembers = $this->getGroupsUsersByCategory($this->getTicketCategory($item));
+			if (count($categoryGroupMembers) === 0) {
+				PluginSmartAssignLogger::addWarning(__FUNCTION__ . ' - Categoria sem grupo ou grupo sem usuários');
+				return;
+			}
+
+			$newAssignmentIndex = isset($lastAssignmentIndex) ? $lastAssignmentIndex + 1 : 0;
+
+			if ($newAssignmentIndex > (count($categoryGroupMembers) - 1)) {
+				$newAssignmentIndex = $newAssignmentIndex % count($categoryGroupMembers);
+			}
+
+			if ($this->rrAssignmentsEntity->getOptionAutoAssignType() === 1) {
+				$this->rrAssignmentsEntity->updateLastAssignmentIndexCategoria($itilcategoriesId, $newAssignmentIndex);
+			} else {
+				$this->rrAssignmentsEntity->updateLastAssignmentIndexGrupo($itilcategoriesId, $newAssignmentIndex);
+			}
+
+			$userId = $categoryGroupMembers[$newAssignmentIndex]['UserId'];
+		}
+
+		// Atribuir o ticket ao técnico selecionado
+		$ticketId = $this->getTicketId($item);
+		$this->setAssignment($ticketId, $userId, $itilcategoriesId);
+		return $userId;
+	}
     
 
     protected function getLastAssignmentIndex(CommonDBTM $item) {
