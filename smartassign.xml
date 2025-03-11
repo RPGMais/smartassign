@@ -31,9 +31,9 @@
     </authors>
     <versions>
         <version>
-            <num>2.1.0</num>
-            <compatibility>9.5, ~10.0.0</compatibility>
-            <download_url>https://github.com/RPGMais/smartassign/releases/download/v2.1.0-beta/smartassign-v2.1.0.tar.gz</download_url>
+            <num>2.2.0</num>
+            <compatibility>~10.0.0</compatibility>
+            <download_url>https://github.com/RPGMais/smartassign/releases/download/v2.2.0-beta/smartassign-v2.2.0.tar.gz</download_url>
         </version>
     </versions>
     <langs>
