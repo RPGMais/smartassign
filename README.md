@@ -1,4 +1,4 @@
-### Procurando por uma versão GLPI 11? Migramos o projeto para [NexTool Solutions]([https://github.com/RPGMais/nextool])
+### Procurando por uma versão GLPI 11? Migramos o projeto para [NexTool Solutions](https://github.com/RPGMais/nextool)
 
 ### Plugin Smart Assign para GLPI - Atribuição Automática de Técnicos por Categoria ou Grupo  
 
