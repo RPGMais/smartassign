@@ -1,3 +1,5 @@
+### Procurando por uma versão GLPI 11? Migramos o projeto para **[NexTool Solutions]([https://github.com/initiativa](https://github.com/RPGMais/nextool))**
+
 ### Plugin Smart Assign para GLPI - Atribuição Automática de Técnicos por Categoria ou Grupo  
 
 O **plugin Smart Assign para GLPI** foi projetado para otimizar a atribuição de tickets, garantindo uma distribuição justa e inteligente da carga de trabalho entre técnicos. Com funcionalidades robustas e configuráveis, ele adapta-se às necessidades de diferentes equipes e organizações.  
